@@ -12,6 +12,14 @@ exports.addAttendance = async (req, res) => {
         message: "Employee and date are required",
       });
     }
+    const attendanceDate = new Date(date);
+    const weekDay = attendanceDate.getDay();
+
+    if (weekDay === 0 || weekDay === 6) {
+      return res.status(400).json({
+        message: "Attendance cannot be marked on weekends",
+      });
+    }
 
     const existingRecord = await Attendance.findOne({
       employee,
@@ -36,7 +44,7 @@ exports.addAttendance = async (req, res) => {
 
     const attendance = await Attendance.create({
       employee,
-      date: new Date(date),
+      date: attendanceDate,
       checkIn,
       checkOut,
       status,
@@ -531,6 +539,16 @@ exports.getMonthlyAttendance = async (req, res) => {
     const endDate = new Date(year, month, 1);
 
     const daysInMonth = new Date(year, month, 0).getDate();
+    let workingDays = 0;
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const date = new Date(year, month - 1, day);
+      const weekDay = date.getDay();
+
+      if (weekDay !== 0 && weekDay !== 6) {
+        workingDays++;
+      }
+    }
 
     // Total active employees
     const totalEmployees = await User.countDocuments({
@@ -570,9 +588,17 @@ exports.getMonthlyAttendance = async (req, res) => {
       const attendanceMap = {};
 
       for (let day = 1; day <= daysInMonth; day++) {
-        attendanceMap[day] = null;
-      }
+        const currentDate = new Date(year, month - 1, day);
+        const weekDay = currentDate.getDay();
 
+        if (weekDay === 0 || weekDay === 6) {
+          attendanceMap[day] = {
+            status: "Weekend",
+          };
+        } else {
+          attendanceMap[day] = null;
+        }
+      }
       const employeeRecords = attendanceRecords.filter(
         (record) =>
           record.employee &&
@@ -594,13 +620,17 @@ exports.getMonthlyAttendance = async (req, res) => {
         );
 
         while (currentDate <= leaveEndDate) {
-          const day = currentDate.getDate();
+          const weekDay = currentDate.getDay();
 
-          attendanceMap[day] = {
-            status: "Leave",
-            leaveType: leave.leaveType,
-            leaveId: leave._id,
-          };
+          if (weekDay !== 0 && weekDay !== 6) {
+            const day = currentDate.getDate();
+
+            attendanceMap[day] = {
+              status: "Leave",
+              leaveType: leave.leaveType,
+              leaveId: leave._id,
+            };
+          }
 
           currentDate.setDate(currentDate.getDate() + 1);
         }
@@ -620,13 +650,15 @@ exports.getMonthlyAttendance = async (req, res) => {
         };
       });
 
-      const presentCount = employeeRecords.filter(
-        (record) => record.status === "Present",
-      ).length;
+      const presentCount = employeeRecords.filter((record) => {
+        const weekDay = new Date(record.date).getDay();
+        return weekDay !== 0 && weekDay !== 6 && record.status === "Present";
+      }).length;
 
-      const absentCount = employeeRecords.filter(
-        (record) => record.status === "Absent",
-      ).length;
+      const absentCount = employeeRecords.filter((record) => {
+        const weekDay = new Date(record.date).getDay();
+        return weekDay !== 0 && weekDay !== 6 && record.status === "Absent";
+      }).length;
 
       let leaveCount = 0;
 
@@ -651,6 +683,7 @@ exports.getMonthlyAttendance = async (req, res) => {
     res.status(200).json({
       success: true,
       daysInMonth,
+      workingDays,
       totalEmployees,
       data: result,
       pagination: {

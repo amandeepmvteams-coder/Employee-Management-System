@@ -166,16 +166,23 @@ exports.fetchEmployeeOnly = async (req, res) => {
   try {
     const page = req.query.page ? Number(req.query.page) : null;
     const limit = req.query.limit ? Number(req.query.limit) : null;
+    const search = req.query.search?.trim() || "";
 
-    const totalEmployees = await User.countDocuments({
+    const filter = {
       role: "employee",
       status: { $ne: "Inactive" },
-    });
+    };
 
-    let query = User.find({
-      role: "employee",
-      status: { $ne: "Inactive" },
-    }).sort({ createdAt: -1 });
+    if (search) {
+      filter.$or = [
+        { name: { $regex: search, $options: "i" } },
+        { email: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    const totalEmployees = await User.countDocuments(filter);
+
+    let query = User.find(filter).sort({ createdAt: -1 });
 
     if (page && limit) {
       const skip = (page - 1) * limit;

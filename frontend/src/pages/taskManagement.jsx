@@ -16,6 +16,7 @@ const TaskManagement = () => {
     refreshEmployee,
     dark,
     setEditingTask,
+    loggedInUser,
   } = useContext(ModalContext);
   const [tasks, setTasks] = useState([]);
   const [openMenuId, setOpenMenuId] = useState(null);
@@ -29,15 +30,18 @@ const TaskManagement = () => {
   const assignUserRef = useRef(null);
   const fetchTasks = async () => {
     try {
-      const response = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/api/v1/tasks/`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
+      if (loggedInUser.role === "admin") {
+        const response = await axios.get(
+          `${import.meta.env.VITE_BACKEND_URL}/api/v1/tasks/`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           },
-        },
-      );
-      setTasks(response.data);
+        );
+        setTasks(response.data);
+      }
+      return;
     } catch (error) {
       toast.error(error?.response?.data?.message);
     }
@@ -52,16 +56,19 @@ const TaskManagement = () => {
   };
   const fetchUsers = async () => {
     try {
-      const response = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/api/v1/employee`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
+      if (loggedInUser.role === "admin") {
+        const response = await axios.get(
+          `${import.meta.env.VITE_BACKEND_URL}/api/v1/employee`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           },
-        },
-      );
+        );
 
-      setUsers(response.data.employees);
+        setUsers(response.data.employees);
+      }
+      return;
     } catch (error) {
       console.log(error);
       toast.error(error?.response?.data?.message);
@@ -300,7 +307,6 @@ const TaskManagement = () => {
   const filteredTasks = tasks.filter((task) =>
     task?.title?.toLowerCase()?.includes(search?.toLowerCase()),
   );
-  // console.log(filteredTasks);
   return (
     <div className="w-full min-h-screen flex justify-center items-start px-4 sm:px-6 md:px-10 lg:px-20 xl:px-20 py-6 md:py-10">
       <div className="flex flex-col w-full max-w-7xl gap-8">
@@ -322,14 +328,17 @@ const TaskManagement = () => {
               <p className="text-gray-400">/ Task Management</p>
             </div>
           </div>
-
-          <button
-            onClick={handleOpenAddTaskForm}
-            className="flex justify-center items-center bg-blue-500 text-white px-4 py-2 rounded-lg gap-2 hover:bg-blue-600 w-full md:w-auto"
-          >
-            <GoPlus className="text-xl" />
-            Add Task
-          </button>
+          {loggedInUser.role === "admin" ? (
+            <button
+              onClick={handleOpenAddTaskForm}
+              className="flex justify-center items-center bg-blue-500 text-white px-4 py-2 rounded-lg gap-2 hover:bg-blue-600 w-full md:w-auto"
+            >
+              <GoPlus className="text-xl" />
+              Add Task
+            </button>
+          ) : (
+            " "
+          )}
         </div>
         {/* Search Bar */}
         <div
@@ -538,7 +547,7 @@ const TaskManagement = () => {
                                             />
                                           ))}
                                         {task.assignTo?.length > 3 && (
-                                          <div className="w-5 h-5 absolute -top-1 -right-1 z-40 flex justify-center items-center text-white rounded-full text-xs -ml-6 bg-red-400">
+                                          <div className="w-5 h-5 absolute -top-1 -right-1 z-30 flex justify-center items-center text-white rounded-full text-xs -ml-6 bg-red-400">
                                             +{task.assignTo.length - 3}
                                           </div>
                                         )}

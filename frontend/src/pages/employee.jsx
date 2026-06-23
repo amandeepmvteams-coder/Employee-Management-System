@@ -14,8 +14,13 @@ import { MdArrowBackIos } from "react-icons/md";
 import { toast } from "sonner";
 const Employee = () => {
   const [users, setUsers] = useState([]);
-  const { setIsAddEmployeeOpen, dark, setEditingEmployee, refreshEmployee } =
-    useContext(ModalContext);
+  const {
+    setIsAddEmployeeOpen,
+    dark,
+    setEditingEmployee,
+    loggedInUser,
+    refreshEmployee,
+  } = useContext(ModalContext);
   const token = localStorage.getItem("token");
   const [totalEmployees, setTotalEmployees] = useState(null);
   const [page, setPage] = useState(1);
@@ -28,26 +33,39 @@ const Employee = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/api/v1/employee/?page=${page}&limit=8`,
-        {
-          headers: {
-            authorization: `Bearer ${token}`,
+      if (loggedInUser.role === "admin") {
+        const response = await axios.get(
+          `${import.meta.env.VITE_BACKEND_URL}/api/v1/employee/?page=${page}&limit=8&search=${search}`,
+          {
+            headers: {
+              authorization: `Bearer ${token}`,
+            },
           },
-        },
-      );
+        );
 
-      setUsers(response.data.employees);
-      setTotalEmployees(response.data.totalEmployees);
-      setTotalPages(response.data.pagination.totalPages);
+        setUsers(response.data.employees);
+        setTotalEmployees(response.data.totalEmployees);
+        setTotalPages(response.data.pagination.totalPages);
+      }
+      return;
     } catch (error) {
       console.log(error?.response?.data?.message);
       toast.error(error?.response?.data?.message);
     }
   };
   useEffect(() => {
+    const timer = setTimeout(() => {
+      setPage(1);
+      fetchUsers();
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  useEffect(() => {
     fetchUsers();
-  }, [refreshEmployee, page]);
+  }, [page, refreshEmployee]);
+
   const handleEdit = (user) => {
     setEditingEmployee(user);
     setIsAddEmployeeOpen(true);
@@ -71,9 +89,9 @@ const Employee = () => {
     setOpenMenuId((prev) => (prev === id ? null : id));
   };
 
-  const filteredUsers = users.filter((user) =>
-    user?.name?.toLowerCase().includes(search?.toLowerCase()),
-  );
+  // const users = users.filter((user) =>
+  //   user?.name?.toLowerCase().includes(search?.toLowerCase()),
+  // );
 
   const handleDelete = async (id) => {
     try {
@@ -128,13 +146,17 @@ const Employee = () => {
             </div>
           </div>
 
-          <button
-            onClick={() => setIsAddEmployeeOpen(true)}
-            className={`flex items-center gap-2 ${dark ? "bg-blue-400 hover:bg-blue-500" : "bg-blue-600 hover:bg-blue-700"}  text-white px-5 py-3 rounded-xl transition-all`}
-          >
-            <GoPlus className="text-lg" />
-            Add Employee
-          </button>
+          {loggedInUser.role === "admin" ? (
+            <button
+              onClick={() => setIsAddEmployeeOpen(true)}
+              className={`flex items-center gap-2 ${dark ? "bg-blue-400 hover:bg-blue-500" : "bg-blue-600 hover:bg-blue-700"}  text-white px-5 py-3 rounded-xl transition-all`}
+            >
+              <GoPlus className="text-lg" />
+              Add Employee
+            </button>
+          ) : (
+            ""
+          )}
         </div>
 
         <div
@@ -213,7 +235,7 @@ const Employee = () => {
         </div>
         {view === "grid" && (
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
-            {filteredUsers.map((user) => (
+            {users?.map((user) => (
               <div
                 key={user._id}
                 className={`relative bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-lg transition-all p-5 ${
@@ -382,7 +404,7 @@ const Employee = () => {
                 </thead>
 
                 <tbody>
-                  {filteredUsers.map((user) => (
+                  {users?.map((user) => (
                     <tr
                       key={user._id}
                       className="border-b border-gray-100 hover:bg-blue-50 transition"
@@ -476,7 +498,7 @@ const Employee = () => {
           </div>
         )}
 
-        {filteredUsers.length === 0 && (
+        {users?.length === 0 && (
           <div className="bg-white rounded-2xl border border-gray-200 p-10 text-center">
             <h3 className="text-lg font-semibold text-gray-700">
               No Employees Found

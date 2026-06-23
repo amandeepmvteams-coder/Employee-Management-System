@@ -12,20 +12,23 @@ const Home = () => {
   const [totalEmployees, setTotalEmployees] = useState(null);
   const [recentUsers, setRecentUsers] = useState([]);
   const token = localStorage.getItem("token");
-  const { dark } = useContext(ModalContext);
+  const { dark, loggedInUser } = useContext(ModalContext);
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/api/v1/employee`,
-          {
-            headers: {
-              authorization: `Bearer ${token}`,
+        if (loggedInUser.role === "admin") {
+          const response = await axios.get(
+            `${import.meta.env.VITE_BACKEND_URL}/api/v1/employee`,
+            {
+              headers: {
+                authorization: `Bearer ${token}`,
+              },
             },
-          },
-        );
+          );
 
-        setUsers(response.data.totalEmployees);
+          setUsers(response.data.employees);
+        }
+        return;
       } catch (error) {
         console.log(error.message);
         toast.error(error?.response?.data?.message);
@@ -37,16 +40,19 @@ const Home = () => {
   useEffect(() => {
     const fetchNewUsers = async () => {
       try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/api/v1/employee/new-employee`,
-          {
-            headers: {
-              authorization: `Bearer ${token}`,
+        if (loggedInUser.role === "admin") {
+          const response = await axios.get(
+            `${import.meta.env.VITE_BACKEND_URL}/api/v1/employee/new-employee`,
+            {
+              headers: {
+                authorization: `Bearer ${token}`,
+              },
             },
-          },
-        );
+          );
 
-        setNewUsers(response.data);
+          setNewUsers(response.data);
+        }
+        return;
       } catch (error) {
         console.log(error.message);
         toast.error(error?.response?.data?.message);
@@ -58,16 +64,19 @@ const Home = () => {
   useEffect(() => {
     const fetchRecentUsers = async () => {
       try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/api/v1/employee/recent-employee`,
-          {
-            headers: {
-              authorization: `Bearer ${token}`,
+        if (loggedInUser.role === "admin") {
+          const response = await axios.get(
+            `${import.meta.env.VITE_BACKEND_URL}/api/v1/employee/recent-employee`,
+            {
+              headers: {
+                authorization: `Bearer ${token}`,
+              },
             },
-          },
-        );
+          );
 
-        setRecentUsers(response.data);
+          setRecentUsers(response.data);
+        }
+        return;
       } catch (error) {
         console.log(error.message);
         toast.error(error?.response?.data?.message);
@@ -88,7 +97,9 @@ const Home = () => {
             >
               Dashboard
             </h1>
-            <p className={`transition-colors duration-200 ${dark ? "text-white" : "text-gray-500"} mt-1`}>
+            <p
+              className={`transition-colors duration-200 ${dark ? "text-white" : "text-gray-500"} mt-1`}
+            >
               Mon, Aug 01, 2024 - Sep 01, 2024
             </p>
           </div>
@@ -105,7 +116,7 @@ const Home = () => {
               <MdSupervisorAccount />
             </div>
 
-            <h2 className="text-3xl font-bold text-gray-900">{users}</h2>
+            <h2 className="text-3xl font-bold text-gray-900">{users.length}</h2>
 
             <p className="text-gray-700 font-semibold mt-2">Total Employees</p>
 

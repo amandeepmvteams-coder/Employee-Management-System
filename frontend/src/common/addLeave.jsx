@@ -4,8 +4,13 @@ import { ModalContext } from "../context/modalContext";
 import { toast } from "sonner";
 
 const AddLeave = () => {
-  const { setOpenAddLeaveForm, setRefreshEmployee, editLeave, setEditLeave } =
-    useContext(ModalContext);
+  const {
+    setOpenAddLeaveForm,
+    setRefreshEmployee,
+    editLeave,
+    loggedInUser,
+    setEditLeave,
+  } = useContext(ModalContext);
 
   const token = localStorage.getItem("token");
   const formRef = useRef(null);
@@ -14,7 +19,7 @@ const AddLeave = () => {
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
-    employee: "",
+    employee: loggedInUser?.role === "admin" ? "" : loggedInUser?._id,
     leaveType: "",
     startDate: "",
     endDate: "",
@@ -32,16 +37,19 @@ const AddLeave = () => {
 
   const fetchEmployees = async () => {
     try {
-      const res = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/api/v1/employee`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
+      if (loggedInUser.role === "admin") {
+        const res = await axios.get(
+          `${import.meta.env.VITE_BACKEND_URL}/api/v1/employee`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           },
-        },
-      );
+        );
 
-      setEmployees(res.data.employees || []);
+        setEmployees(res.data.employees || []);
+      }
+      return;
     } catch (error) {
       toast.error(
         error?.response?.data?.message || "Failed to fetch employees",
@@ -69,6 +77,11 @@ const AddLeave = () => {
   }, [setOpenAddLeaveForm]);
 
   const handleSubmit = async (e) => {
+    const payload = {
+      ...formData,
+      employee:
+        loggedInUser?.role === "admin" ? formData.employee : loggedInUser._id,
+    };
     e.preventDefault();
     setLoading(true);
 
@@ -76,7 +89,7 @@ const AddLeave = () => {
       if (editLeave) {
         const res = await axios.put(
           `${import.meta.env.VITE_BACKEND_URL}/api/v1/leave/${editLeave._id}`,
-          formData,
+          payload,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -85,7 +98,7 @@ const AddLeave = () => {
         );
         toast.success(res.data.message);
         setFormData({
-          employee: "",
+          employee: loggedInUser?.role === "admin" ? "" : loggedInUser?._id,
           leaveType: "",
           startDate: "",
           endDate: "",
@@ -97,7 +110,7 @@ const AddLeave = () => {
       } else {
         const res = await axios.post(
           `${import.meta.env.VITE_BACKEND_URL}/api/v1/leave/add-leave`,
-          formData,
+          payload,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -108,7 +121,7 @@ const AddLeave = () => {
         toast.success(res.data.message);
 
         setFormData({
-          employee: "",
+          employee: loggedInUser?.role === "admin" ? "" : loggedInUser?._id,
           leaveType: "",
           startDate: "",
           endDate: "",
@@ -127,19 +140,32 @@ const AddLeave = () => {
   };
 
   useEffect(() => {
-    if (editLeave) {
-      setFormData({
-        employee:
-          typeof editLeave.employee === "object"
-            ? editLeave.employee._id
-            : editLeave.employee || "",
-        leaveType: editLeave.leaveType || "",
-        startDate: editLeave.startDate ? editLeave.startDate.split("T")[0] : "",
-        endDate: editLeave.endDate ? editLeave.endDate.split("T")[0] : "",
-        reason: editLeave.reason || "",
-      });
-    }
+    if (!editLeave) return;
+
+    setFormData({
+      employee:
+        typeof editLeave.employee === "object"
+          ? editLeave.employee?._id
+          : editLeave.employee || "",
+      leaveType: editLeave.leaveType || "",
+      startDate: editLeave.startDate
+        ? new Date(editLeave.startDate).toISOString().split("T")[0]
+        : "",
+      endDate: editLeave.endDate
+        ? new Date(editLeave.endDate).toISOString().split("T")[0]
+        : "",
+      reason: editLeave.reason || "",
+    });
   }, [editLeave]);
+
+  useEffect(() => {
+    if (loggedInUser && loggedInUser.role !== "admin") {
+      setFormData((prev) => ({
+        ...prev,
+        employee: loggedInUser._id,
+      }));
+    }
+  }, [loggedInUser]);
 
   return (
     <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4">
@@ -168,22 +194,30 @@ const AddLeave = () => {
           {/* Employee */}
           <div>
             <label className="block text-sm font-medium mb-2">Employee</label>
+            {loggedInUser && loggedInUser.role === "admin" ? (
+              <select
+                name="employee"
+                value={formData.employee}
+                onChange={handleChange}
+                required
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              >
+                <option value="">Select Employee</option>
 
-            <select
-              name="employee"
-              value={formData.employee}
-              onChange={handleChange}
-              required
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-            >
-              <option value="">Select Employee</option>
-
-              {employees.map((employee) => (
-                <option key={employee._id} value={employee._id}>
-                  {employee.name}
-                </option>
-              ))}
-            </select>
+                {employees.map((employee) => (
+                  <option key={employee._id} value={employee._id}>
+                    {employee.name}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <input
+                type="text"
+                value={loggedInUser?.name || ""}
+                disabled
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-gray-100 cursor-not-allowed"
+              />
+            )}
           </div>
 
           {/* Leave Type */}
@@ -216,7 +250,6 @@ const AddLeave = () => {
               <input
                 type="date"
                 name="startDate"
-                // min={today}
                 value={formData.startDate}
                 onChange={handleChange}
                 required
@@ -230,7 +263,6 @@ const AddLeave = () => {
               <input
                 type="date"
                 name="endDate"
-                // min={formData.startDate || today}
                 value={formData.endDate}
                 onChange={handleChange}
                 required
@@ -274,8 +306,8 @@ const AddLeave = () => {
               {loading
                 ? "Saving..."
                 : editLeave
-                  ? "Update Task"
-                  : "Create Task"}{" "}
+                  ? "Update Leave"
+                  : "Apply Leave"}
             </button>
           </div>
         </form>

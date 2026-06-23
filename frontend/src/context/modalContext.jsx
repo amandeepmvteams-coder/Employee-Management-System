@@ -15,10 +15,13 @@ export const ModalProvider = ({ children }) => {
   const [openAddAttendanceForm, setOpenAddAttendanceForm] = useState(false);
   const [openAddLeaveForm, setOpenAddLeaveForm] = useState(false);
   const [editLeave, setEditLeave] = useState(null);
-
+  const loggedInUser = localStorage.getItem("user")
+    ? JSON.parse(localStorage.getItem("user"))
+    : null;
   return (
     <ModalContext.Provider
       value={{
+        loggedInUser,
         isAddEmployeeOpen,
         setIsAddEmployeeOpen,
         isNavOpen,

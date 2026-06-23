@@ -13,13 +13,40 @@ exports.addLeave = async (req, res) => {
       });
     }
 
-    if (new Date(endDate) < new Date(startDate)) {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    if (end < start) {
       return res.status(400).json({
         success: false,
         message: "End date cannot be before start date",
       });
     }
 
+    // Calculate leave days excluding weekends
+    let totalDays = 0;
+
+    for (
+      let current = new Date(start);
+      current <= end;
+      current.setDate(current.getDate() + 1)
+    ) {
+      const day = current.getDay();
+
+      if (day !== 0 && day !== 6) {
+        totalDays++;
+      }
+    }
+
+    // Prevent leave request if selected range contains only weekends
+    if (totalDays === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Selected dates contain only weekends",
+      });
+    }
+
+    // Employee validation
     const employeeExists = await User.findById(employee);
 
     if (!employeeExists) {
@@ -29,37 +56,43 @@ exports.addLeave = async (req, res) => {
       });
     }
 
+    // Check overlapping leaves
     const existingLeave = await Leave.findOne({
       employee,
-      startDate: { $lte: endDate },
-      endDate: { $gte: startDate },
+      startDate: { $lte: end },
+      endDate: { $gte: start },
     });
 
     if (existingLeave) {
       return res.status(400).json({
         success: false,
-        message: "Leave already exists for selected dates",
+        message: "Leave already exists for the selected dates",
       });
     }
 
+    // Create leave
     const leave = await Leave.create({
       employee,
       leaveType,
-      startDate,
-      endDate,
+      startDate: start,
+      endDate: end,
       reason,
+      totalDays,
       status: "Pending",
       approvedBy: null,
       approvedAt: null,
     });
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       message: "Leave added successfully",
       leave,
     });
   } catch (error) {
-    res.status(500).json({
+    console.error("Add Leave Error:", error);
+
+    return res.status(500).json({
+      success: false,
       message: "Server Error",
       error: error.message,
     });
@@ -237,6 +270,10 @@ exports.getLeaveDashboardStats = async (req, res) => {
       status: "Rejected",
     });
 
+    const totalEmployees = await User.countDocuments({
+      role: "employee",
+    });
+
     const approvedLeaveRecords = await Leave.find({
       status: "Approved",
     });
@@ -304,7 +341,51 @@ exports.getLeaveDashboardStats = async (req, res) => {
         todayPresent,
         todayAbsent,
         todayLeave,
+        totalEmployees,
       },
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+exports.fetchLeavesByEmployeeId = async (req, res) => {
+  try {
+    const { employeeId } = req.params;
+    const employee = await User.findById(employeeId);
+    if (!employee) {
+      return res.status(404).json({
+        message: "Employee not Found",
+      });
+    }
+    const leave = await Leave.find({ employee: employeeId }).populate(
+      "employee",
+      "name profilePhoto department designation",
+    );
+    if (leave.length === 0) {
+      return res.status(404).json({
+        message: "Leaves not Found",
+      });
+    }
+    const formattedLeaves = leave.map((leave) => {
+      const leaveDays =
+        Math.ceil(
+          (new Date(leave.endDate) - new Date(leave.startDate)) /
+            (1000 * 60 * 60 * 24),
+        ) + 1;
+
+      return {
+        ...leave.toObject(),
+        leaveDays,
+      };
+    });
+    res.status(200).json({
+      success: true,
+      message: "Employee Leaves Found Successfully",
+      leave: formattedLeaves,
     });
   } catch (error) {
     res.status(500).json({

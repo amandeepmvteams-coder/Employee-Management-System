@@ -5,16 +5,16 @@ const authMiddleware = require("../middlewares/authMiddleware");
 
 router.post(
   "/add-leave",
-  authMiddleware.protect,
-  authMiddleware.admin,
+
   leaveController.addLeave,
 );
 router.get(
-  "/dashboard-stats",
+  "/stats",
   authMiddleware.protect,
   authMiddleware.admin,
   leaveController.getLeaveDashboardStats,
 );
+router.get("/:employeeId/leaves", leaveController.fetchLeavesByEmployeeId);
 router.put(
   "/:leaveId/status",
   authMiddleware.protect,

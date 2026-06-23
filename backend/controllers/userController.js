@@ -76,11 +76,11 @@ exports.login = async (req, res) => {
       });
     }
 
-    if (user.role !== "admin") {
-      return res.status(403).json({
-        message: "Access denied. Admins only.",
-      });
-    }
+    // if (user.role !== "admin") {
+    //   return res.status(403).json({
+    //     message: "Access denied. Admins only.",
+    //   });
+    // }
 
     const isMatch = await bcrypt.compare(password, user.password);
 

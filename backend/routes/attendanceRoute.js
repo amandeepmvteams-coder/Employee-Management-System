@@ -26,8 +26,7 @@ router.post(
 
 router.get(
   "/statistics",
-  authMiddleware.protect,
-  authMiddleware.admin,
+  
   attendanceController.getAttendanceStatistics,
 );
 
