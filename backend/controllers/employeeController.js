@@ -2,7 +2,7 @@ const User = require("../model/userModel");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const Leave = require("../model/leaveModel");
-const Attendance=require("../model/attendanceModel")
+const Attendance = require("../model/attendanceModel");
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECURE, {
     expiresIn: process.env.JWT_EXPIRES_IN,
@@ -242,21 +242,12 @@ exports.recentEmployee = async (req, res) => {
       },
     });
 
-    const onLeaveToday =
-      (
-        await Leave.distinct("employee", {
-          status: "Approved",
-          startDate: { $lt: tomorrow },
-          $or: [
-            {
-              endDate: { $gte: today },
-            },
-            {
-              leaveType: "HalfDay",
-            },
-          ],
-        })
-      ).length - 1;
+    const onLeaveToday = (
+      await Leave.distinct("employee", {
+        status: "Approved",
+        startDate: { $gte: today, $lt: tomorrow },
+      })
+    ).length;
 
     const CountNewEmployees = await User.countDocuments({
       role: "employee",

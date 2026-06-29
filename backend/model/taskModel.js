@@ -55,6 +55,10 @@ const taskSchema = new mongoose.Schema(
           type: Date,
           default: Date.now,
         },
+        isEdited: {
+          type: Boolean,
+          default: false,
+        },
       },
     ],
   },

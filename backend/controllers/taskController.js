@@ -289,7 +289,7 @@ exports.getMyTasks = async (req, res) => {
       .sort({ createdAt: -1 })
       .populate(
         "assignTo createdBy comments.user",
-        "name role email profilePhoto",
+        "_id name role email profilePhoto",
       );
     if (!tasks) {
       return res.status(404).json({
@@ -304,7 +304,28 @@ exports.getMyTasks = async (req, res) => {
     });
   }
 };
-
+exports.recentTasks = async (req, res) => {
+  try {
+    const tasks = await Task.find({})
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .populate(
+        "assignTo createdBy comments.user",
+        "name role email profilePhoto",
+      );
+    if (!tasks) {
+      return res.status(404).json({
+        Error: "Tasks Not Found",
+      });
+    }
+    res.status(200).json(tasks);
+  } catch (error) {
+    res.status(500).json({
+      message: "Server Error",
+      error: error.message,
+    });
+  }
+};
 exports.addComment = async (req, res) => {
   try {
     const { taskId } = req.params;
@@ -414,6 +435,71 @@ exports.deleteComment = async (req, res) => {
     });
   } catch (error) {
     console.error("Delete Comment Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error.",
+    });
+  }
+};
+
+exports.updateComment = async (req, res) => {
+  try {
+    const { taskId, commentId } = req.params;
+    const { message } = req.body;
+
+    if (!message || !message.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: "Comment message is required.",
+      });
+    }
+
+    const task = await Task.findById(taskId).populate(
+      "comments.user",
+      "name email profilePhoto role",
+    );
+
+    if (!task) {
+      return res.status(404).json({
+        success: false,
+        message: "Task not found.",
+      });
+    }
+
+    const comment = task.comments.id(commentId);
+
+    if (!comment) {
+      return res.status(404).json({
+        success: false,
+        message: "Comment not found.",
+      });
+    }
+
+    // Only comment owner can edit
+    if (comment.user._id.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not authorized to update this comment.",
+      });
+    }
+
+    comment.message = message.trim();
+    comment.createdAt = Date.now();
+    comment.isEdited = true;
+
+    await task.save();
+
+    // Populate again because save removes populated fields
+    await task.populate("comments.user", "name email profilePhoto role");
+
+    return res.status(200).json({
+      success: true,
+      message: "Comment updated successfully.",
+      comments: task.comments,
+    });
+  } catch (error) {
+    console.error("Update Comment Error:", error);
 
     return res.status(500).json({
       success: false,

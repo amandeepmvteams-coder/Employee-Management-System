@@ -186,7 +186,7 @@ const Leave = () => {
               Leaves
             </h1>
 
-            <div className="flex flex-wrap text-sm font-semibold gap-1">
+            {/* <div className="flex flex-wrap text-sm font-semibold gap-1">
               <Link
                 to="/"
                 className={` ${dark ? "text-blue-400 hover:text-blue-500" : "text-blue-500 hover:text-blue-600"}`}
@@ -196,12 +196,12 @@ const Leave = () => {
               <p className={`${dark ? "text-white" : "text-gray-400"}`}>
                 / Leaves
               </p>
-            </div>
+            </div> */}
           </div>
 
           <button
             onClick={() => setOpenAddLeaveForm(true)}
-            className="flex justify-center items-center bg-blue-500 text-white px-4 py-2 rounded-lg gap-2 hover:bg-blue-600 w-full md:w-auto"
+            className="flex justify-center items-center hover:cursor-pointer bg-blue-500 text-white px-4 py-2 rounded-lg gap-2 hover:bg-blue-600 w-full md:w-auto"
           >
             <GoPlus className="text-xl" />
             {loggedInUser.role === "admin" ? "Add Leave" : "Apply Leave"}
@@ -389,7 +389,7 @@ const Leave = () => {
 
                       <td className="px-3 md:px-6 py-3 md:py-4">
                         <select
-                          className={`text-xs md:text-sm p-2 rounded-lg ${
+                          className={`text-xs md:text-sm p-2  hover:cursor-pointer rounded-lg ${
                             leave.status === "Pending"
                               ? "text-orange-700 bg-orange-100"
                               : leave.status === "Approved"
@@ -411,7 +411,7 @@ const Leave = () => {
                         <div ref={openMenuId === leave._id ? menuRef : null}>
                           <button
                             onClick={() => toggleEditMenu(leave._id)}
-                            className="p-2 rounded-lg hover:bg-gray-100"
+                            className="p-2 rounded-lg hover:cursor-pointer hover:bg-gray-100"
                           >
                             <BsThreeDots />
                           </button>
@@ -420,14 +420,14 @@ const Leave = () => {
                             <div className="absolute right-0 top-10 w-36 bg-white border border-gray-200 rounded-xl shadow-lg z-50">
                               <button
                                 onClick={() => handleEdit(leave)}
-                                className="w-full text-sm text-left px-4 py-2 hover:bg-gray-100"
+                                className="w-full text-sm text-left hover:cursor-pointer px-4 py-2 hover:bg-gray-100"
                               >
                                 Edit
                               </button>
 
                               <button
                                 onClick={() => handleDelete(leave._id)}
-                                className="w-full text-sm text-left px-4 py-2 text-red-500 hover:bg-red-100"
+                                className="w-full text-sm text-left px-4 py-2 hover:cursor-pointer text-red-500 hover:bg-red-100"
                               >
                                 Delete
                               </button>
@@ -571,7 +571,7 @@ const Leave = () => {
             <button
               disabled={page === 1}
               onClick={() => setPage((prev) => prev - 1)}
-              className={`px-2 py-1 text-sm  rounded flex border items-center justify-center  transition-all duration-150  bg-white text-blue-600 border-blue-500 hover:bg-blue-600 hover:text-white disabled:cursor-not-allowed  `}
+              className={`px-2 py-1 text-sm hover:cursor-pointer  rounded flex border items-center justify-center  transition-all duration-150  bg-white text-blue-600 border-blue-500 hover:bg-blue-600 hover:text-white disabled:cursor-not-allowed  `}
             >
               <MdArrowBackIos /> Previous
             </button>
@@ -583,7 +583,7 @@ const Leave = () => {
             <button
               disabled={page === totalPages}
               onClick={() => setPage((prev) => prev + 1)}
-              className={`px-2 py-1 text-sm  bg-white text-blue-600 border-blue-500 hover:bg-blue-600 hover:text-white flex  border  items-center justify-center rounded transition-all duration-150  disabled:cursor-not-allowed  `}
+              className={`px-2 py-1 text-sm hover:cursor-pointer  bg-white text-blue-600 border-blue-500 hover:bg-blue-600 hover:text-white flex  border  items-center justify-center rounded transition-all duration-150  disabled:cursor-not-allowed  `}
             >
               Next <MdArrowForwardIos />
             </button>

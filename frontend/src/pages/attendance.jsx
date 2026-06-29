@@ -178,19 +178,12 @@ const Attendance = () => {
                 year: "numeric",
               })}`}
             </h1>
-
-            <div className="flex flex-wrap text-sm font-semibold gap-1">
-              <Link to="/" className="text-blue-500 hover:text-blue-600">
-                Dashboard
-              </Link>
-              <p className="text-gray-400">/ Attendance</p>
-            </div>
           </div>
 
           {loggedInUser && loggedInUser.role === "admin" ? (
             <button
               onClick={handleAttendancePopupForm}
-              className="flex justify-center items-center bg-blue-500 text-white px-4 py-2 rounded-xl gap-2 hover:bg-blue-600 w-full md:w-auto"
+              className="flex justify-center items-center hover:cursor-pointer bg-blue-500 text-white px-4 py-2 rounded-xl gap-2 hover:bg-blue-600 w-full md:w-auto"
             >
               <GoPlus className="text-xl" />
               Add Attendance

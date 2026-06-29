@@ -122,7 +122,7 @@ exports.fetchAllUsers = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({
-      message: err.message,
+      message: error.message,
     });
   }
 };

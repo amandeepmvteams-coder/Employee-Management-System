@@ -11,6 +11,12 @@ router.delete(
   protect,
   taskController.deleteComment,
 );
+router.get("/recent-tasks", protect, admin, taskController.recentTasks);
+router.put(
+  "/:taskId/comments/:commentId",
+  protect,
+  taskController.updateComment,
+);
 router.use(protect, admin);
 router.post("/:taskId/assign", taskController.assignTask);
 router.patch("/:taskId/due-date", taskController.updateDueDate);

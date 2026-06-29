@@ -30,12 +30,15 @@ const TaskManagement = () => {
   const [users, setUsers] = useState([]);
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [dueDate, setDueDate] = useState("");
-  const [comment, setComment] = useState("");
   const [search, setSearch] = useState("");
   const [showMembers, setShowMembers] = useState(false);
   const [searchMember, setSearchMember] = useState("");
   const menuRef = useRef(null);
   const assignUserRef = useRef(null);
+  const deleteMenuRef = useRef(null);
+  const [comment, setComment] = useState("");
+  const [editingCommentId, setEditingCommentId] = useState(null);
+  const [openDeleteCommentMenu, setOpenDeleteCommentMenu] = useState(null);
 
   // Filter Assigned Members In TaskDetails Bar
   const filteredMembers =
@@ -248,6 +251,23 @@ const TaskManagement = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        deleteMenuRef.current &&
+        !deleteMenuRef.current.contains(event.target)
+      ) {
+        setOpenDeleteCommentMenu(null);
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
+
   // Click Outside Function For Closing Assign User Popup
 
   useEffect(() => {
@@ -406,6 +426,9 @@ const TaskManagement = () => {
   // Closing Task Detail Bar
   const closeSidebar = () => {
     setIsTaskBarOpen(false);
+    setShowMembers(false);
+    setOpenDeleteCommentMenu(null);
+
     setComment("");
     setSelectedTask(null);
   };
@@ -441,6 +464,7 @@ const TaskManagement = () => {
       fetchTasks();
       loggedInUserTasks();
       setComment("");
+      setEditingCommentId(null);
 
       toast.success(response.data.message);
     } catch (error) {
@@ -472,11 +496,44 @@ const TaskManagement = () => {
             : task,
         ),
       );
+      // setOpenDeleteCommentMenu(null);
 
       toast.success(response.data.message);
     } catch (error) {
       toast.error(error?.response?.data?.message || "Something went wrong");
     }
+  };
+
+  const handleEditComment = async (taskId, commentId) => {
+    try {
+      const response = await axios.put(
+        `${import.meta.env.VITE_BACKEND_URL}/api/v1/tasks/${taskId}/comments/${commentId}`,
+        {
+          message: comment,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      setSelectedTask((prev) => ({
+        ...prev,
+        comments: response.data.comments,
+      }));
+
+      setEditingCommentId(null);
+      setComment("");
+
+      toast.success(response.data.message);
+    } catch (error) {
+      toast.error(error?.response?.data?.message);
+    }
+  };
+
+  const toggleDeleteCommentMenu = (id) => {
+    setOpenDeleteCommentMenu((prev) => (prev === id ? null : id));
   };
   return (
     <div className="w-full relative min-h-screen flex justify-center overflow-x-hidden items-start px-4 sm:px-6 md:px-10 lg:px-20 xl:px-20 py-6 md:py-10">
@@ -489,21 +546,11 @@ const TaskManagement = () => {
             >
               Task Management
             </h1>
-
-            <div className="flex flex-wrap text-sm font-semibold gap-1">
-              <Link
-                to="/"
-                className={`${dark ? "text-blue-400 hover:text-blue-500" : "text-blue-500 hover:text-blue-600"}`}
-              >
-                Dashboard
-              </Link>
-              <p className="text-gray-400">/ Task Management</p>
-            </div>
           </div>
           {loggedInUser?.role === "admin" ? (
             <button
               onClick={handleOpenAddTaskForm}
-              className="flex justify-center items-center bg-blue-500 text-white px-4 py-2 rounded-lg gap-2 hover:bg-blue-600 w-full md:w-auto"
+              className="flex justify-center hover:cursor-pointer items-center bg-blue-500 text-white px-4 py-2 rounded-lg gap-2 hover:bg-blue-600 w-full md:w-auto"
             >
               <GoPlus className="text-xl" />
               Add Task
@@ -644,7 +691,7 @@ const TaskManagement = () => {
                                         e.stopPropagation();
                                         toggleEditMenu(task._id);
                                       }}
-                                      className="p-1 rounded-lg border border-gray-200 hover:bg-gray-100"
+                                      className="p-1 rounded-lg border hover:cursor-pointer border-gray-200 hover:bg-gray-100"
                                     >
                                       <BsThreeDots />
                                     </button>
@@ -657,7 +704,7 @@ const TaskManagement = () => {
                                           e.stopPropagation();
                                           handleEdit(task);
                                         }}
-                                        className="w-full text-sm text-left px-4 py-3 hover:bg-gray-100"
+                                        className="w-full text-sm hover:cursor-pointer text-left px-4 py-3 hover:bg-gray-100"
                                       >
                                         Edit
                                       </button>
@@ -667,7 +714,7 @@ const TaskManagement = () => {
                                           e.stopPropagation();
                                           handleDelete(task._id);
                                         }}
-                                        className="w-full text-sm text-left px-4 py-3 text-red-500 hover:bg-red-100"
+                                        className="w-full text-sm hover:cursor-pointer text-left px-4 py-3 text-red-500 hover:bg-red-100"
                                       >
                                         Delete
                                       </button>
@@ -698,7 +745,7 @@ const TaskManagement = () => {
                                       </h2>
                                       <input
                                         type="date"
-                                        className="text-xs w-auto font-semibold"
+                                        className="text-xs w-auto hover:cursor-pointer font-semibold"
                                         value={
                                           task.dueDate?.split("T")[0] || ""
                                         }
@@ -749,7 +796,7 @@ const TaskManagement = () => {
 
                                               handleOpenAssignPopup(task);
                                             }}
-                                            className={`w-10 h-10 rounded-full ${column.color} border-2 border-white flex justify-center items-center -ml-5`}
+                                            className={`w-10 h-10 rounded-full hover:cursor-pointer ${column.color} border-2 border-white flex justify-center items-center -ml-5`}
                                           >
                                             <FiPlus
                                               className={`text-xl ${column.text}`}
@@ -981,7 +1028,7 @@ const TaskManagement = () => {
                                             ))}
 
                                           {task.assignTo?.length > 3 && (
-                                            <div className="absolute -top-1 -right-1 z-30 flex items-center justify-center rounded-full bg-red-500 text-white border border-white w-5 h-5 text-[10px] sm:w-6 sm:h-6 sm:text-xs md:w-7 md:h-7 md:text-sm ">
+                                            <div className="absolute -top-1 -right-1 z-30 flex items-center justify-center rounded-full bg-red-400 text-white border border-white w-5 h-5 text-[10px]  sm:text-xs   ">
                                               +{task.assignTo.length - 3}
                                             </div>
                                           )}
@@ -1027,14 +1074,14 @@ const TaskManagement = () => {
               {selectedTask?.title}
             </h2>
 
-            <p className="text-sm text-gray-400">
+            {/* <p className="text-sm text-gray-400">
               #{selectedTask?._id?.slice(-6)}
-            </p>
+            </p> */}
           </div>
 
           <button
             onClick={closeSidebar}
-            className="p-2 rounded-full hover:bg-gray-100 transition"
+            className="p-2 rounded-full hover:bg-gray-100 hover:cursor-pointer transition"
           >
             <IoClose size={24} />
           </button>
@@ -1214,29 +1261,63 @@ const TaskManagement = () => {
                               <RiVerifiedBadgeFill className="text-blue-600 text-lg " />
                             )}
                           </div>
-
-                          <p className="text-xs text-gray-400">
-                            {formatDistanceToNow(new Date(comment.createdAt), {
-                              addSuffix: true,
-                            })}
-                          </p>
+                          <div className="flex justify-center items-center gap-4">
+                            <p className="text-xs text-gray-400">
+                              {formatDistanceToNow(
+                                new Date(comment.createdAt),
+                                {
+                                  addSuffix: true,
+                                },
+                              )}
+                            </p>
+                            {comment.isEdited ? (
+                              <span className="px-2 py-1 bg-gray-200 text-gray-500 rounded text-xs">
+                                Edited
+                              </span>
+                            ) : (
+                              ""
+                            )}
+                          </div>
                         </div>
+                        <div className="relative">
+                          {loggedInUser?._id === comment.user._id && (
+                            <button
+                              onClick={() =>
+                                toggleDeleteCommentMenu(comment._id)
+                              }
+                              className="bg-gray-100 p-1.5 rounded-lg hover:bg-gray-200 transition-colors duration-150 hover:cursor-pointer"
+                            >
+                              <BsThreeDots className="text-lg" />
+                            </button>
+                          )}
 
-                        {(loggedInUser?._id === comment.user._id ||
-                          loggedInUser?.role === "admin") && (
-                          <button
-                            onClick={() =>
-                              handleDeleteTaskComment(
-                                selectedTask._id,
-                                comment._id,
-                              )
-                            }
-                            className="p-2 rounded-lg text-red-500 hover:bg-red-100 transition"
-                            title="Delete Comment"
-                          >
-                            <MdDeleteOutline size={20} />
-                          </button>
-                        )}
+                          {openDeleteCommentMenu === comment._id && (
+                            <div className="absolute rounded-lg -top-17 right-6 shadow bg-white border border-gray-300">
+                              <button
+                                onClick={() => {
+                                  setEditingCommentId(comment._id);
+                                  setComment(comment.message);
+                                  setOpenDeleteCommentMenu(null);
+                                }}
+                                className="px-3 py-1.5 w-full text-sm rounded-t-lg text-green-500 hover:bg-green-50  hover:cursor-pointer transition"
+                              >
+                                Edit
+                              </button>
+                              <button
+                                onClick={() => {
+                                  handleDeleteTaskComment(
+                                    selectedTask._id,
+                                    comment._id,
+                                  );
+                                  setOpenDeleteCommentMenu(null);
+                                }}
+                                className="px-3 py-1.5   text-red-500 text-sm rounded-b-lg hover:bg-red-50  hover:cursor-pointer transition"
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          )}
+                        </div>
                       </div>
 
                       {/* Bubble */}
@@ -1273,10 +1354,17 @@ const TaskManagement = () => {
             />
 
             <button
-              onClick={() => handleAddComment(selectedTask?._id)}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 rounded-xl font-medium"
+              onClick={() => {
+                if (editingCommentId) {
+                  handleEditComment(selectedTask._id, editingCommentId);
+                } else {
+                  handleAddComment(selectedTask._id);
+                }
+              }}
+              className="bg-blue-600 hover:bg-blue-700 hover:cursor-pointer
+            text-white px-6 rounded-xl font-medium"
             >
-              Send
+              {editingCommentId ? "Update" : "Send"}
             </button>
           </div>
         </div>
