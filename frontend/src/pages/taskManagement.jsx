@@ -558,7 +558,7 @@ const TaskManagement = () => {
           {loggedInUser?.role === "admin" ? (
             <button
               onClick={handleOpenAddTaskForm}
-              className="flex justify-center hover:cursor-pointer items-center bg-blue-500 text-white px-4 py-2 rounded-lg gap-2 hover:bg-blue-600 w-full md:w-auto"
+              className="flex justify-center cursor-pointer items-center bg-blue-500 text-white px-4 py-2 rounded-lg gap-2 hover:bg-blue-600 w-full md:w-auto"
             >
               <GoPlus className="text-xl" />
               Add Task
@@ -699,7 +699,7 @@ const TaskManagement = () => {
                                         e.stopPropagation();
                                         toggleEditMenu(task._id);
                                       }}
-                                      className="p-1 rounded-lg border hover:cursor-pointer border-gray-200 hover:bg-gray-100"
+                                      className="p-1 rounded-lg border cursor-pointer border-gray-200 hover:bg-gray-100"
                                     >
                                       <BsThreeDots />
                                     </button>
@@ -712,7 +712,7 @@ const TaskManagement = () => {
                                           e.stopPropagation();
                                           handleEdit(task);
                                         }}
-                                        className="w-full text-sm hover:cursor-pointer text-left px-4 py-3 hover:bg-gray-100"
+                                        className="w-full text-sm cursor-pointer text-left px-4 py-3 hover:bg-gray-100"
                                       >
                                         Edit
                                       </button>
@@ -722,7 +722,7 @@ const TaskManagement = () => {
                                           e.stopPropagation();
                                           handleDelete(task._id);
                                         }}
-                                        className="w-full text-sm hover:cursor-pointer text-left px-4 py-3 text-red-500 hover:bg-red-100"
+                                        className="w-full text-sm cursor-pointer text-left px-4 py-3 text-red-500 hover:bg-red-100"
                                       >
                                         Delete
                                       </button>
@@ -753,7 +753,7 @@ const TaskManagement = () => {
                                       </h2>
                                       <input
                                         type="date"
-                                        className="text-xs w-auto hover:cursor-pointer font-semibold"
+                                        className="text-xs w-auto cursor-pointer font-semibold"
                                         value={
                                           task.dueDate?.split("T")[0] || ""
                                         }
@@ -804,7 +804,7 @@ const TaskManagement = () => {
 
                                               handleOpenAssignPopup(task);
                                             }}
-                                            className={`w-10 h-10 rounded-full hover:cursor-pointer ${column.color} border-2 border-white flex justify-center items-center -ml-5`}
+                                            className={`w-10 h-10 rounded-full cursor-pointer ${column.color} border-2 border-white flex justify-center items-center -ml-5`}
                                           >
                                             <FiPlus
                                               className={`text-xl ${column.text}`}
@@ -1085,7 +1085,7 @@ const TaskManagement = () => {
 
           <button
             onClick={closeSidebar}
-            className="p-2 rounded-full hover:bg-gray-100 hover:cursor-pointer transition"
+            className="p-2 rounded-full hover:bg-gray-100 cursor-pointer transition"
           >
             <IoClose size={24} />
           </button>
@@ -1150,7 +1150,7 @@ const TaskManagement = () => {
 
                 setShowMembers(!showMembers);
               }}
-              className="w-full flex justify-between items-center border border-gray-300 rounded-xl px-4 py-3 hover:border-blue-500 transition"
+              className="w-full flex justify-between cursor-pointer items-center border border-gray-300 rounded-xl px-4 py-3 hover:border-blue-500 transition"
             >
               <div className="flex items-center gap-3">
                 <div className="flex -space-x-3">
@@ -1313,7 +1313,7 @@ const TaskManagement = () => {
                               onClick={() =>
                                 toggleDeleteCommentMenu(comment._id)
                               }
-                              className="bg-gray-100 p-1.5 rounded-lg hover:bg-gray-200 transition-colors duration-150 hover:cursor-pointer"
+                              className="bg-gray-100 p-1.5 rounded-lg hover:bg-gray-200 transition-colors duration-150 cursor-pointer"
                             >
                               <BsThreeDots className="text-lg" />
                             </button>
@@ -1327,7 +1327,7 @@ const TaskManagement = () => {
                                   setComment(comment.message);
                                   setOpenDeleteCommentMenu(null);
                                 }}
-                                className="px-3 py-1.5 w-full text-sm rounded-t-lg text-green-500 hover:bg-green-50  hover:cursor-pointer transition"
+                                className="px-3 py-1.5 w-full text-sm rounded-t-lg text-green-500 hover:bg-green-50  cursor-pointer transition"
                               >
                                 Edit
                               </button>
@@ -1339,7 +1339,7 @@ const TaskManagement = () => {
                                   );
                                   setOpenDeleteCommentMenu(null);
                                 }}
-                                className="px-3 py-1.5   text-red-500 text-sm rounded-b-lg hover:bg-red-50  hover:cursor-pointer transition"
+                                className="px-3 py-1.5   text-red-500 text-sm rounded-b-lg hover:bg-red-50 cursor-pointer transition"
                               >
                                 Delete
                               </button>
@@ -1389,7 +1389,7 @@ const TaskManagement = () => {
                   handleAddComment(selectedTask._id);
                 }
               }}
-              className="bg-blue-600 hover:bg-blue-700 hover:cursor-pointer
+              className="bg-blue-600 hover:bg-blue-700 cursor-pointer
             text-white px-6 rounded-xl font-medium"
             >
               {editingCommentId ? "Update" : "Send"}

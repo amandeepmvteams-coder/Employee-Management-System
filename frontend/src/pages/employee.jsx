@@ -135,7 +135,7 @@ const Employee = () => {
           {loggedInUser.role === "admin" ? (
             <button
               onClick={() => setIsAddEmployeeOpen(true)}
-              className={`flex items-center gap-2 hover:cursor-pointer ${dark ? "bg-blue-400 hover:bg-blue-500" : "bg-blue-600 hover:bg-blue-700"}  text-white px-5 py-3 rounded-xl transition-all`}
+              className={`flex items-center gap-2 cursor-pointer ${dark ? "bg-blue-400 hover:bg-blue-500" : "bg-blue-600 hover:bg-blue-700"}  text-white px-5 py-3 rounded-xl transition-all`}
             >
               <GoPlus className="text-lg" />
               Add Employee
@@ -187,7 +187,7 @@ const Employee = () => {
             <div className="hidden md:flex items-center gap-2">
               <button
                 onClick={() => setView("grid")}
-                className={`p-2 rounded-lg transition-all duration-200 hover:cursor-pointer
+                className={`p-2 rounded-lg transition-all duration-200 cursor-pointer
           ${
             view === "grid"
               ? dark
@@ -203,7 +203,7 @@ const Employee = () => {
 
               <button
                 onClick={() => setView("list")}
-                className={`p-2 rounded-lg transition-all duration-200 hover:cursor-pointer
+                className={`p-2 rounded-lg transition-all duration-200 cursor-pointer
           ${
             view === "list"
               ? dark
@@ -240,7 +240,7 @@ const Employee = () => {
                   <div ref={openMenuId === user._id ? menuRef : null}>
                     <button
                       onClick={() => toggleEditMenu(user._id)}
-                      className="p-2 rounded-lg border border-gray-200 hover:cursor-pointer hover:bg-gray-100"
+                      className="p-2 rounded-lg border border-gray-200 cursor-pointer hover:bg-gray-100"
                     >
                       <BsThreeDots />
                     </button>
@@ -249,20 +249,20 @@ const Employee = () => {
                       <div className="absolute top-14 right-5 w-32 bg-white border border-gray-300  rounded-xl shadow-lg overflow-hidden z-20">
                         <button
                           onClick={() => handleEdit(user)}
-                          className="w-full text-sm text-left px-4 py-2 hover:cursor-pointer hover:bg-gray-100"
+                          className="w-full text-sm text-left px-4 py-2 cursor-pointer hover:bg-gray-100"
                         >
                           Edit
                         </button>
                         <button
                           onClick={() => handleViewProfile(user)}
-                          className="w-full text-sm text-left px-4 py-2 hover:cursor-pointer hover:bg-blue-100"
+                          className="w-full text-sm text-left px-4 py-2 cursor-pointer hover:bg-blue-100"
                         >
                           View Details
                         </button>
 
                         <button
                           onClick={() => handleDelete(user._id)}
-                          className="w-full text-sm text-left px-4 py-2 hover:cursor-pointer text-red-500 hover:bg-red-100"
+                          className="w-full text-sm text-left px-4 py-2 cursor-pointer text-red-500 hover:bg-red-100"
                         >
                           Delete
                         </button>
@@ -446,7 +446,7 @@ const Employee = () => {
                         <div ref={openMenuId === user._id ? menuRef : null}>
                           <button
                             onClick={() => toggleEditMenu(user._id)}
-                            className="p-2 rounded-lg hover:cursor-pointer hover:bg-gray-100"
+                            className="p-2 rounded-lg cursor-pointer hover:bg-gray-100"
                           >
                             <BsThreeDots />
                           </button>
@@ -455,20 +455,20 @@ const Employee = () => {
                             <div className="absolute right-8 top-12 w-36 bg-white border border-gray-200 rounded-xl shadow-lg z-50">
                               <button
                                 onClick={() => handleEdit(user)}
-                                className="w-full text-sm text-left px-4 py-2 hover:cursor-pointer hover:bg-gray-100"
+                                className="w-full text-sm text-left px-4 py-2 cursor-pointer hover:bg-gray-100"
                               >
                                 Edit
                               </button>
                               <button
                                 onClick={() => handleViewProfile(user)}
-                                className="w-full text-sm text-left px-4 py-2 hover:cursor-pointer hover:bg-blue-100"
+                                className="w-full text-sm text-left px-4 py-2 cursor-pointer hover:bg-blue-100"
                               >
                                 View Details
                               </button>
 
                               <button
                                 onClick={() => handleDelete(user._id)}
-                                className="w-full text-sm text-left px-4 py-2 hover:cursor-pointer text-red-500 hover:bg-red-100"
+                                className="w-full text-sm text-left px-4 py-2 cursor-pointer text-red-500 hover:bg-red-100"
                               >
                                 Delete
                               </button>
@@ -499,7 +499,7 @@ const Employee = () => {
         <button
           disabled={page === 1}
           onClick={() => setPage((prev) => prev - 1)}
-          className={`px-2 py-1 text-sm  rounded hover:cursor-pointer flex border items-center justify-center  transition-all duration-150  ${dark ? "bg-black text-white border-white hover:bg-white hover:text-black" : " bg-white text-blue-600 border-blue-500 hover:bg-blue-600 hover:text-white"} disabled:cursor-not-allowed  `}
+          className={`px-2 py-1 text-sm  rounded cursor-pointer flex border items-center justify-center  transition-all duration-150  ${dark ? "bg-black text-white border-white hover:bg-white hover:text-black" : " bg-white text-blue-600 border-blue-500 hover:bg-blue-600 hover:text-white"} disabled:cursor-not-allowed  `}
         >
           <MdArrowBackIos /> Previous
         </button>
@@ -513,7 +513,7 @@ const Employee = () => {
         <button
           disabled={page === totalPages}
           onClick={() => setPage((prev) => prev + 1)}
-          className={`px-2 py-1 text-sm hover:cursor-pointer ${dark ? "bg-black text-white border-white  hover:bg-white hover:text-black" : " bg-white text-blue-600 border-blue-500 hover:bg-blue-600 hover:text-white"} flex  border  items-center justify-center rounded transition-all duration-150  disabled:cursor-not-allowed  `}
+          className={`px-2 py-1 text-sm cursor-pointer ${dark ? "bg-black text-white border-white  hover:bg-white hover:text-black" : " bg-white text-blue-600 border-blue-500 hover:bg-blue-600 hover:text-white"} flex  border  items-center justify-center rounded transition-all duration-150  disabled:cursor-not-allowed  `}
         >
           Next <MdArrowForwardIos />
         </button>

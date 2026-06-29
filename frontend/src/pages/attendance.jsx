@@ -183,7 +183,7 @@ const Attendance = () => {
           {loggedInUser && loggedInUser.role === "admin" ? (
             <button
               onClick={handleAttendancePopupForm}
-              className="flex justify-center items-center hover:cursor-pointer bg-blue-500 text-white px-4 py-2 rounded-xl gap-2 hover:bg-blue-600 w-full md:w-auto"
+              className="flex justify-center items-center cursor-pointer bg-blue-500 text-white px-4 py-2 rounded-xl gap-2 hover:bg-blue-600 w-full md:w-auto"
             >
               <GoPlus className="text-xl" />
               Add Attendance
@@ -221,7 +221,7 @@ const Attendance = () => {
                 <select
                   value={month}
                   onChange={(e) => setMonth(Number(e.target.value))}
-                  className="border border-gray-300 rounded-lg p-1 md:px-2 md:py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="border border-gray-300 rounded-lg p-1 cursor-pointer md:px-2 md:py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value={1}>January</option>
                   <option value={2}>February</option>
@@ -240,7 +240,7 @@ const Attendance = () => {
                 <select
                   value={year}
                   onChange={(e) => setYear(Number(e.target.value))}
-                  className="border border-gray-300 rounded-lg p-1 md:px-2 md:py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="border border-gray-300 rounded-lg p-1 cursor-pointer md:px-2 md:py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value={2026}>2026</option>
                   <option value={2025}>2025</option>
@@ -344,7 +344,7 @@ const Attendance = () => {
               <button
                 disabled={page === 1}
                 onClick={() => setPage((prev) => prev - 1)}
-                className="px-2 py-1 bg-white text-sm rounded flex hover:cursor-pointer text-blue-600 border border-blue-500 items-center justify-center  transition-all duration-150 hover:bg-blue-600 hover:text-white disabled:cursor-not-allowed  "
+                className="px-2 py-1 bg-white text-sm rounded flex cursor-pointer text-blue-600 border border-blue-500 items-center justify-center  transition-all duration-150 hover:bg-blue-600 hover:text-white disabled:cursor-not-allowed  "
               >
                 <MdArrowBackIos /> Previous
               </button>
@@ -356,7 +356,7 @@ const Attendance = () => {
               <button
                 disabled={page === totalPages}
                 onClick={() => setPage((prev) => prev + 1)}
-                className="px-2 py-1 bg-white text-sm flex hover:cursor-pointer text-blue-600 border border-blue-500 items-center justify-center rounded transition-all duration-150 hover:bg-blue-600 hover:text-white disabled:cursor-not-allowed  "
+                className="px-2 py-1 bg-white text-sm flex cursor-pointer text-blue-600 border border-blue-500 items-center justify-center rounded transition-all duration-150 hover:bg-blue-600 hover:text-white disabled:cursor-not-allowed  "
               >
                 Next <MdArrowForwardIos />
               </button>
@@ -518,7 +518,7 @@ const Attendance = () => {
                 <select
                   value={monthCount}
                   onChange={(e) => setMonthCount(Number(e.target.value))}
-                  className="border border-gray-300 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="border border-gray-300 cursor-pointer rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value={1}>January</option>
                   <option value={2}>February</option>
@@ -537,7 +537,7 @@ const Attendance = () => {
                 <select
                   value={yearCount}
                   onChange={(e) => setYearCount(Number(e.target.value))}
-                  className="border border-gray-300 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="border border-gray-300 rounded-lg px-2 py-1.5 cursor-pointer text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value={2026}>2026</option>
                   <option value={2025}>2025</option>

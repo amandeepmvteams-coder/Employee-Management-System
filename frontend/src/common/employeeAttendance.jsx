@@ -163,7 +163,7 @@ const EmployeeAttendance = () => {
                 attendance?.checkOut !== "" &&
                 attendance?.workDuration <= 510 && (
                   <button
-                    className="bg-red-500 text-white px-3 py-1.5 text-sm rounded transition-all duration-300 hover:bg-red-700"
+                    className="bg-red-500 text-white px-3 py-1.5 text-sm rounded cursor-pointer transition-all duration-300 hover:bg-red-700"
                     onClick={() => handleResumeAttendance(attendance?._id)}
                   >
                     Resume
@@ -216,7 +216,7 @@ const EmployeeAttendance = () => {
                   <button
                     disabled={buttonLoading}
                     onClick={handleCheckIn}
-                    className="bg-green-600 hover:bg-green-700 text-white px-10 py-4 rounded-xl flex items-center gap-3"
+                    className="bg-green-600 hover:bg-green-700 cursor-pointer text-white px-10 py-4 rounded-xl flex items-center gap-3"
                   >
                     <FiLogIn size={22} />
                     Check In
@@ -225,7 +225,7 @@ const EmployeeAttendance = () => {
                   <button
                     disabled={buttonLoading}
                     onClick={handleCheckOut}
-                    className="bg-red-600 hover:bg-red-700 text-white px-10 py-4 rounded-xl flex items-center gap-3"
+                    className="bg-red-600 hover:bg-red-700 cursor-pointer text-white px-10 py-4 rounded-xl flex items-center gap-3"
                   >
                     <FiLogOut size={22} />
                     Check Out

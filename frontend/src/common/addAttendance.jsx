@@ -118,7 +118,7 @@ const AddAttendance = () => {
             value={formData.employee}
             onChange={handleChange}
             required
-            className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            className="w-full border border-gray-300 cursor-pointer rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
           >
             <option value="">Select Employee</option>
 
@@ -138,7 +138,7 @@ const AddAttendance = () => {
             name="date"
             value={formData.date}
             onChange={handleChange}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2"
+            className="w-full border border-gray-300  rounded-lg px-4 py-2"
             required
           />
         </div>
@@ -176,7 +176,7 @@ const AddAttendance = () => {
             name="status"
             value={formData.status}
             onChange={handleChange}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2"
+            className="w-full border border-gray-300 cursor-pointer rounded-lg px-4 py-2"
           >
             <option value="Present">Present</option>
             <option value="Absent">Absent</option>
@@ -192,7 +192,7 @@ const AddAttendance = () => {
               name="leaveType"
               value={formData.leaveType}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2"
+              className="w-full border border-gray-300 cursor-pointer rounded-lg px-4 py-2"
             >
               <option value="">Select Leave Type</option>
               <option value="Sick">Sick Leave</option>
@@ -212,13 +212,13 @@ const AddAttendance = () => {
               setOpenAddAttendanceForm(false);
               setRefreshAttendance((prev) => !prev);
             }}
-            className=" bg-blue-500 text-white px-8 py-3 rounded-lg hover:bg-blue-600 transition"
+            className=" bg-blue-500 text-white px-8 py-3 rounded-lg cursor-pointer hover:bg-blue-600 transition"
           >
             cancel
           </button>
           <button
             type="submit"
-            className=" bg-green-500 text-white px-8 py-3 rounded-lg hover:bg-green-600 transition"
+            className=" cursor-pointer bg-green-500 text-white px-8 py-3 rounded-lg hover:bg-green-600 transition"
           >
             Add
           </button>

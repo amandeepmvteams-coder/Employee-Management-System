@@ -57,7 +57,7 @@ const Navbar = () => {
   };
 
   const iconBtn = `
-    p-2 rounded-full transition-all duration-200
+    p-2 rounded-full transition-all cursor-pointer duration-200
     ${dark ? "hover:bg-zinc-800" : "hover:bg-gray-100"}
   `;
 
@@ -125,16 +125,16 @@ const Navbar = () => {
             dark ? "border-gray-700" : "border-gray-200"
           }`}
         >
-          <button className={iconBtn}>
+          <button className={`${iconBtn}`}>
             <CiMail className="text-xl" />
           </button>
 
-          <button className={`${iconBtn} relative`}>
+          <button className={`${iconBtn}  relative`}>
             <IoNotificationsOutline className="text-xl" />
             <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500" />
           </button>
 
-          <button className={iconBtn}>
+          <button className={`${iconBtn}`}>
             <IoCalendarOutline className="text-xl" />
           </button>
         </div>
@@ -252,7 +252,7 @@ const Navbar = () => {
             >
               <button
                 onClick={handleLogout}
-                className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-red-500 hover:bg-red-500/10 transition"
+                className="flex w-full items-center gap-2 cursor-pointer rounded-lg px-3 py-2 text-red-500 hover:bg-red-500/10 transition"
               >
                 <LuLogOut />
                 Logout

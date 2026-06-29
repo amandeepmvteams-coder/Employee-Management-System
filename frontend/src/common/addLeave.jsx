@@ -192,7 +192,7 @@ const AddLeave = () => {
               setEditLeave(null);
               setOpenAddLeaveForm(false);
             }}
-            className="text-gray-500 hover:text-red-500 text-xl"
+            className="text-gray-500 cursor-pointer hover:text-red-500 text-xl"
           >
             ✕
           </button>
@@ -208,7 +208,7 @@ const AddLeave = () => {
                 value={formData.employee}
                 onChange={handleChange}
                 required
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                className="w-full border border-gray-300 cursor-pointer rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
               >
                 <option value="">Select Employee</option>
 
@@ -237,7 +237,7 @@ const AddLeave = () => {
               value={formData.leaveType}
               onChange={handleChange}
               required
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              className="w-full border border-gray-300 cursor-pointer rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
             >
               <option value="">Select Leave Type</option>
               <option value="Sick">Sick</option>
@@ -262,7 +262,7 @@ const AddLeave = () => {
                   name="startDate"
                   value={formData.startDate}
                   onChange={handleChange}
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="w-full border border-gray-300  rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 />
               </div>
               <div>
@@ -347,7 +347,7 @@ const AddLeave = () => {
                 setEditLeave(null);
                 setOpenAddLeaveForm(false);
               }}
-              className="w-full sm:w-1/2 border border-gray-300 py-3 rounded-lg hover:bg-gray-100 transition"
+              className="w-full sm:w-1/2 border border-gray-300 py-3 cursor-pointer rounded-lg hover:bg-gray-100 transition"
             >
               Cancel
             </button>
@@ -355,7 +355,7 @@ const AddLeave = () => {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full sm:w-1/2 ${editLeave ? "bg-green-600 hover:bg-green-700" : "bg-blue-600  hover:bg-blue-700"}  disabled:opacity-50 text-white py-3 rounded-lg transition`}
+              className={`w-full sm:w-1/2 cursor-pointer ${editLeave ? "bg-green-600 hover:bg-green-700" : "bg-blue-600  hover:bg-blue-700"}  disabled:opacity-50 text-white py-3 rounded-lg transition`}
             >
               {loading
                 ? "Saving..."

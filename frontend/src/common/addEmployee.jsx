@@ -193,7 +193,7 @@ const AddEmployee = () => {
       >
         <RxCross1
           onClick={handleCancel}
-          className="absolute top-5 right-5 text-black hover:cursor-pointer font-bold"
+          className="absolute top-5 right-5 text-black cursor-pointer font-bold"
         />
         <h2 className="text-2xl md:text-3xl font-bold text-slate-800  mb-6">
           {editingEmployee ? "Edit Employee" : "Add Employee"}
@@ -270,7 +270,7 @@ const AddEmployee = () => {
               name="department"
               value={formData.department}
               onChange={handleChange}
-              className="w-full border rounded-lg px-2 py-1 focus:ring-2 focus:ring-blue-500 text-sm placeholder:text-gray-400 outline-none"
+              className="w-full border rounded-lg px-2 py-1 focus:ring-2 cursor-pointer focus:ring-blue-500 text-sm placeholder:text-gray-400 outline-none"
               required
             >
               <option value="">Select Department</option>
@@ -306,7 +306,7 @@ const AddEmployee = () => {
               name="status"
               value={formData.status}
               onChange={handleChange}
-              className="w-full border rounded-lg px-2 py-1 focus:ring-2 focus:ring-blue-500 text-sm placeholder:text-gray-400 outline-none"
+              className="w-full border rounded-lg px-2 py-1 focus:ring-2 cursor-pointer focus:ring-blue-500 text-sm placeholder:text-gray-400 outline-none"
             >
               <option value="Active">Active</option>
               <option value="Inactive">Inactive</option>
@@ -335,7 +335,7 @@ const AddEmployee = () => {
               name="gender"
               value={formData.gender}
               onChange={handleChange}
-              className="w-full border rounded-lg px-2 py-1 focus:ring-2 focus:ring-blue-500 text-sm placeholder:text-gray-400 outline-none"
+              className="w-full border rounded-lg px-2 py-1 focus:ring-2 cursor-pointer focus:ring-blue-500 text-sm placeholder:text-gray-400 outline-none"
             >
               <option value="">Select Gender</option>
               <option value="Male">Male</option>
@@ -362,6 +362,7 @@ const AddEmployee = () => {
                 <label key={day} className="flex items-center gap-2">
                   <input
                     type="checkbox"
+                    className="cursor-pointer"
                     checked={formData.weeklyOffs.includes(day)}
                     onChange={(e) => {
                       if (e.target.checked) {
@@ -416,14 +417,14 @@ const AddEmployee = () => {
             <button
               onClick={handleCancel}
               type="button"
-              className="w-full md:w-auto px-4 py-2 md:px-8 md:py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm md:text-lg  font-semibold transition-all"
+              className="w-full md:w-auto px-4 py-2 md:px-8 md:py-3 cursor-pointer bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm md:text-lg  font-semibold transition-all"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={uploading}
-              className="w-full md:w-auto px-4 py-2 md:px-8 md:py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg text-sm md:text-lg font-semibold transition-all"
+              className="w-full md:w-auto px-4 py-2 md:px-8 md:py-3 cursor-pointer bg-green-500 hover:bg-green-600 text-white rounded-lg text-sm md:text-lg font-semibold transition-all"
             >
               {uploading
                 ? "Uploading..."

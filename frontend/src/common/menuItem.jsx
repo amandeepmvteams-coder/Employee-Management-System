@@ -14,7 +14,7 @@ const MenuItem = ({ icon, title, url, setOpenProfile }) => {
   return (
     <button
       onClick={handleNavigation}
-      className={`flex w-full items-center gap-3 px-4 py-3 text-sm transition-all duration-200
+      className={`flex w-full items-center gap-3 px-4 py-3 text-sm cursor-pointer transition-all duration-200
         ${
           dark
             ? "text-gray-300 hover:bg-zinc-800 hover:text-white"

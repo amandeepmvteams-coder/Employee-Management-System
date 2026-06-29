@@ -2,15 +2,15 @@ const User = require("../model/userModel");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
-const signToken = (id) => {
+const signToken = (id, expiry) => {
   return jwt.sign({ id }, process.env.JWT_SECURE, {
-    expiresIn: process.env.JWT_EXPIRES_IN,
+    expiresIn: expiry,
   });
 };
 
 exports.register = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, rememberMe } = req.body;
 
     if (!name || !email || !password) {
       return res.status(400).json({
@@ -33,8 +33,10 @@ exports.register = async (req, res) => {
       email,
       password: hashedPassword,
     });
-
-    const token = signToken(user._id);
+    const expiry = rememberMe
+      ? process.env.JWT_EXPIRES_IN_REMEMBER
+      : process.env.JWT_EXPIRES_IN_NOT_REMEMBER;
+    const token = signToken(user._id, expiry);
 
     user.password = undefined;
 
@@ -60,7 +62,8 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, rememberMe } = req.body;
+    // console.log(rememberMe);
 
     if (!email || !password) {
       return res.status(400).json({
@@ -89,8 +92,11 @@ exports.login = async (req, res) => {
         message: "Invalid email or password",
       });
     }
+    const expiry = rememberMe
+      ? process.env.JWT_EXPIRES_IN_REMEMBER
+      : process.env.JWT_EXPIRES_IN_NOT_REMEMBER;
 
-    const token = signToken(user._id);
+    const token = signToken(user._id, expiry);
 
     user.password = undefined;
 

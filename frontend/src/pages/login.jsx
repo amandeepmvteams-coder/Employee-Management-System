@@ -12,7 +12,7 @@ const Login = () => {
     email: "",
     password: "",
   });
-
+  const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
@@ -58,7 +58,7 @@ const Login = () => {
     try {
       const { data } = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/api/v1/users/login`,
-        formData,
+        { ...formData, rememberMe },
       );
 
       localStorage.setItem("token", data.token);
@@ -130,13 +130,19 @@ const Login = () => {
 
           <div className="flex items-center justify-between">
             <label className="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" className="w-4 h-4 accent-blue-600" />
-              <span className="text-sm text-gray-600">Remember Me</span>
+              <input
+                type="checkbox"
+                name="rememberMe"
+                onChange={(e) => setRememberMe(e.target.checked)}
+                checked={rememberMe}
+                className="w-4 h-4 cursor-pointer accent-blue-600"
+              />
+              <span className="text-sm  text-gray-600">Remember Me</span>
             </label>
 
             <Link
               to="#"
-              className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+              className="text-sm text-blue-600 hover:text-blue-700  font-medium"
             >
               Forgot Password?
             </Link>
@@ -144,7 +150,7 @@ const Login = () => {
 
           <button
             type="submit"
-            className="w-full py-3 rounded-xl bg-linear-to-r from-blue-500 to-indigo-600 text-white font-semibold hover:shadow-lg hover:scale-[1.02] transition-all duration-200"
+            className="w-full py-3 rounded-xl bg-linear-to-r cursor-pointer from-blue-500 to-indigo-600 text-white font-semibold hover:shadow-lg hover:scale-[1.02] transition-all duration-200"
           >
             Sign In
           </button>
@@ -153,7 +159,7 @@ const Login = () => {
             Don't have an account?{" "}
             <Link
               // to="/register"
-              className="text-blue-600 font-semibold hover:text-blue-700"
+              className="text-blue-600 cursor-pointer font-semibold hover:text-blue-700"
             >
               Sign Up
             </Link>
@@ -171,7 +177,7 @@ const Login = () => {
         <div className="flex justify-center gap-4">
           <Link
             to="#"
-            className="w-12 h-12 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all duration-200"
+            className="w-12 h-12 rounded-full bg-blue-100 text-blue-600 flex items-center  justify-center hover:bg-blue-600 hover:text-white transition-all duration-200"
           >
             <FaFacebookF size={18} />
           </Link>

@@ -262,7 +262,7 @@ const AddTask = () => {
               name="status"
               value={formData.status}
               onChange={handleChange}
-              className="w-full border rounded-lg text-sm p-3"
+              className="w-full border cursor-pointer rounded-lg text-sm p-3"
             >
               <option value="New">New</option>
               <option value="Pending">Pending</option>
@@ -279,7 +279,7 @@ const AddTask = () => {
               name="priority"
               value={formData.priority}
               onChange={handleChange}
-              className="w-full border rounded-lg text-sm p-3"
+              className="w-full border rounded-lg cursor-pointer text-sm p-3"
             >
               <option value="Low">Low</option>
               <option value="Medium">Medium</option>
@@ -293,7 +293,7 @@ const AddTask = () => {
         <button
           disabled={loading}
           type="submit"
-          className={`w-full  mt-4 text-white py-3 ${editingTask ? "bg-green-600 hover:bg-green-700" : "bg-blue-600 hover:bg-blue-700"} rounded-lg  transition`}
+          className={`w-full cursor-pointer  mt-4 text-white py-3 ${editingTask ? "bg-green-600 hover:bg-green-700" : "bg-blue-600 hover:bg-blue-700"} rounded-lg  transition`}
         >
           {loading ? "Saving..." : editingTask ? "Update Task" : "Create Task"}
         </button>
