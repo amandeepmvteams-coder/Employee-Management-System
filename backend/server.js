@@ -10,7 +10,15 @@ const attendanceRoutes = require("./routes/attendanceRoute");
 const leaveRoutes = require("./routes/leaveRoutes");
 const cors = require("cors");
 dotEnv.config({});
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://employee-hub-frontend-lime.vercel.app",
+    ],
+    credentials: true,
+  }),
+);
 app.use(express.json());
 
 DB();
