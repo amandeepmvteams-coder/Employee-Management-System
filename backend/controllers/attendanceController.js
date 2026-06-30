@@ -409,6 +409,8 @@ exports.checkIn = async (req, res) => {
 
     const { start, end } = getISTDayRange();
 
+    console.log("START:", start.toISOString());
+    console.log("END:", end.toISOString());
     let attendance = await Attendance.findOne({
       employee: employeeId,
       date: {
@@ -423,6 +425,7 @@ exports.checkIn = async (req, res) => {
         message: "You have already checked in today.",
       });
     }
+    // const { start, end } = getISTDayRange();
 
     if (!attendance) {
       attendance = await Attendance.create({
@@ -455,13 +458,13 @@ exports.checkOut = async (req, res) => {
   try {
     const employeeId = req.user.id;
 
-    const { start: startOfDay, end: endOfDay } = getISTDayRange();
+    const { start, end } = getISTDayRange();
 
     const attendance = await Attendance.findOne({
       employee: employeeId,
       date: {
-        $gte: startOfDay,
-        $lte: endOfDay,
+        $gte: start,
+        $lte: end,
       },
     });
 

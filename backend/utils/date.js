@@ -1,9 +1,9 @@
 const { fromZonedTime, toZonedTime } = require("date-fns-tz");
 
-exports.getISTDayRange = () => {
+exports.getISTDayRange = (date = new Date()) => {
   const timeZone = "Asia/Kolkata";
 
-  const nowIST = toZonedTime(new Date(), timeZone);
+  const nowIST = toZonedTime(date, timeZone);
 
   const startIST = new Date(nowIST);
   startIST.setHours(0, 0, 0, 0);

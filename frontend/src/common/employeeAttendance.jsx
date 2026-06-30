@@ -89,11 +89,7 @@ const EmployeeAttendance = () => {
   const formatTime = (time) => {
     if (!time) return "--";
 
-    const [hour, minute] = time.split(":");
-    const date = new Date();
-    date.setHours(Number(hour), Number(minute));
-
-    return date.toLocaleTimeString("en-IN", {
+    return new Date(time).toLocaleTimeString("en-IN", {
       hour: "2-digit",
       minute: "2-digit",
       hour12: true,
@@ -192,7 +188,7 @@ const EmployeeAttendance = () => {
                   <span>Check In</span>
 
                   <span>
-                    <p>{formatTime(attendance?.checkIn?.slice(0, 5))}</p>
+                    <p>{formatTime(attendance?.checkIn)}</p>
                   </span>
                 </div>
 
@@ -200,7 +196,7 @@ const EmployeeAttendance = () => {
                   <span>Check Out</span>
 
                   <span>
-                    <p>{formatTime(attendance?.checkOut?.slice(0, 5))}</p>
+                    <p>{formatTime(attendance?.checkOut)}</p>
                   </span>
                 </div>
 
@@ -293,7 +289,7 @@ const EmployeeAttendance = () => {
                   <div className="flex items-center gap-2 text-green-600">
                     <IoCheckmarkCircle />
                     Checked In at{" "}
-                    <p>{formatTime(attendance?.checkIn?.slice(0, 5))}</p>
+                    <p>{formatTime(attendance?.checkIn)}</p>
                   </div>
                 )}
 
@@ -301,7 +297,7 @@ const EmployeeAttendance = () => {
                   <div className="flex items-center gap-2 text-blue-600">
                     <IoCheckmarkCircle />
                     Checked Out at{" "}
-                    <p>{formatTime(attendance?.checkOut?.slice(0, 5))}</p>
+                    <p>{formatTime(attendance?.checkOut)}</p>
                   </div>
                 )}
 
