@@ -2,6 +2,8 @@ const Attendance = require("../model/attendanceModel");
 const Leave = require("../model/leaveModel");
 const User = require("../model/userModel");
 const mongoose = require("mongoose");
+const { getISTDayRange } = require("./../utils/date");
+const { toZonedTime } = require("date-fns-tz");
 
 exports.addAttendance = async (req, res) => {
   try {
@@ -12,7 +14,7 @@ exports.addAttendance = async (req, res) => {
         message: "Employee and date are required",
       });
     }
-    const attendanceDate = new Date(date);
+    const attendanceDate = toZonedTime(new Date(date), "Asia/Kolkata");
 
     const employeeData = await User.findById(employee);
 
@@ -34,9 +36,14 @@ exports.addAttendance = async (req, res) => {
       });
     }
 
+    const { start, end } = getISTDayRange(attendanceDate);
+
     const existingRecord = await Attendance.findOne({
       employee,
-      date: new Date(date),
+      date: {
+        $gte: start,
+        $lte: end,
+      },
     });
 
     if (existingRecord) {
@@ -57,14 +64,13 @@ exports.addAttendance = async (req, res) => {
 
     const attendance = await Attendance.create({
       employee,
-      date: attendanceDate,
+      date: start,
       checkIn,
       checkOut,
       status,
       leaveType,
       workDuration,
     });
-
     const populatedAttendance = await attendance.populate(
       "employee",
       "name email designation department",
@@ -156,11 +162,11 @@ exports.updateAttendance = async (req, res) => {
       });
     }
 
-    attendance.checkIn = checkIn || attendance.checkIn;
-    attendance.checkOut = checkOut || attendance.checkOut;
-    attendance.status = status || attendance.status;
-    attendance.leaveType = leaveType || attendance.leaveType;
-    attendance.workDuration = workDuration || attendance.workDuration;
+    attendance.checkIn = checkIn ?? attendance.checkIn;
+    attendance.checkOut = checkOut ?? attendance.checkOut;
+    attendance.status = status ?? attendance.status;
+    attendance.leaveType = leaveType ?? attendance.leaveType;
+    attendance.workDuration = workDuration ?? attendance.workDuration;
 
     await attendance.save();
 
@@ -219,9 +225,8 @@ exports.getAttendanceByDateRange = async (req, res) => {
       });
     }
 
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    end.setHours(23, 59, 59, 999);
+    const { start } = getISTDayRange(new Date(startDate));
+    const { end } = getISTDayRange(new Date(endDate));
 
     const attendance = await Attendance.find({
       employee: employeeId,
@@ -250,8 +255,15 @@ exports.getAttendanceStatistics = async (req, res) => {
     let attendanceMatch = {};
 
     if (month && year) {
-      const startDate = new Date(year, month - 1, 1);
-      const endDate = new Date(year, month, 0, 23, 59, 59, 999);
+      const firstDay = new Date(year, month - 1, 1);
+      const lastDay = new Date(
+        year,
+        month - 1,
+        new Date(year, month, 0).getDate(),
+      );
+
+      const { start: startDate } = getISTDayRange(firstDay);
+      const { end: endDate } = getISTDayRange(lastDay);
 
       attendanceMatch = {
         date: {
@@ -395,31 +407,13 @@ exports.checkIn = async (req, res) => {
   try {
     const employeeId = req.user.id;
 
-    const now = new Date();
-
-    const startOfDay = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate(),
-    );
-
-    const endOfDay = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate(),
-      23,
-      59,
-      59,
-      999,
-    );
-
-    const checkInTime = now.toTimeString().split(" ")[0];
+    const { start, end } = getISTDayRange();
 
     let attendance = await Attendance.findOne({
       employee: employeeId,
       date: {
-        $gte: startOfDay,
-        $lte: endOfDay,
+        $gte: start,
+        $lte: end,
       },
     });
 
@@ -433,12 +427,12 @@ exports.checkIn = async (req, res) => {
     if (!attendance) {
       attendance = await Attendance.create({
         employee: employeeId,
-        date: startOfDay,
-        checkIn: checkInTime,
+        date: start,
+        checkIn: new Date(),
         status: "Present",
       });
     } else {
-      attendance.checkIn = checkInTime;
+      attendance.checkIn = new Date();
       attendance.status = "Present";
       await attendance.save();
     }
@@ -461,23 +455,7 @@ exports.checkOut = async (req, res) => {
   try {
     const employeeId = req.user.id;
 
-    const now = new Date();
-
-    const startOfDay = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate(),
-    );
-
-    const endOfDay = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate(),
-      23,
-      59,
-      59,
-      999,
-    );
+    const { start: startOfDay, end: endOfDay } = getISTDayRange();
 
     const attendance = await Attendance.findOne({
       employee: employeeId,
@@ -507,16 +485,12 @@ exports.checkOut = async (req, res) => {
         message: "You have already checked out today.",
       });
     }
-    attendance.checkOut = now.toTimeString().split(" ")[0];
+    attendance.checkOut = new Date();
 
-    const checkInTime = new Date(`1970-01-01T${attendance.checkIn}`);
-    const checkOutTime = new Date(`1970-01-01T${attendance.checkOut}`);
-
-    let workDuration = Math.floor((checkOutTime - checkInTime) / (1000 * 60));
-
-    if (workDuration < 0) {
-      workDuration += 24 * 60;
-    }
+    const workDuration = Math.floor(
+      (attendance.checkOut.getTime() - attendance.checkIn.getTime()) /
+        (1000 * 60),
+    );
 
     attendance.workDuration = workDuration;
 
@@ -541,22 +515,7 @@ exports.getTodayAttendance = async (req, res) => {
     const employeeId = req.user.id;
 
     const today = new Date();
-
-    const startOfDay = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      today.getDate(),
-    );
-
-    const endOfDay = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      today.getDate(),
-      23,
-      59,
-      59,
-      999,
-    );
+    const { start: startOfDay, end: endOfDay } = getISTDayRange();
 
     const attendance = await Attendance.findOne({
       employee: employeeId,
@@ -584,15 +543,25 @@ exports.getMonthlyAttendance = async (req, res) => {
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 7;
 
-    const startDate = new Date(year, month - 1, 1);
-    const endDate = new Date(year, month, 1);
+    const firstDay = new Date(year, month - 1, 1);
+    const lastDay = new Date(
+      year,
+      month - 1,
+      new Date(year, month, 0).getDate(),
+    );
+
+    const { start: startDate } = getISTDayRange(firstDay);
+    const { end: endDate } = getISTDayRange(lastDay);
 
     const daysInMonth = new Date(year, month, 0).getDate();
+
     let workingDays = 0;
 
     for (let day = 1; day <= daysInMonth; day++) {
-      const date = new Date(year, month - 1, day);
-      const weekDay = date.getDay();
+      const weekDay = toZonedTime(
+        new Date(year, month - 1, day),
+        "Asia/Kolkata",
+      ).getDay();
 
       if (weekDay !== 0 && weekDay !== 6) {
         workingDays++;
@@ -620,12 +589,15 @@ exports.getMonthlyAttendance = async (req, res) => {
 
     // Attendance only for employees on current page
     const attendanceRecords = await Attendance.find({
-      employee: { $in: employeeIds },
+      employee: {
+        $in: employeeIds,
+      },
       date: {
         $gte: startDate,
-        $lt: endDate,
+        $lte: endDate,
       },
     }).populate("employee", "name employeeId profilePhoto");
+
     const approvedLeaves = await Leave.find({
       employee: { $in: employeeIds },
       status: "Approved",
@@ -637,7 +609,10 @@ exports.getMonthlyAttendance = async (req, res) => {
       const attendanceMap = {};
 
       for (let day = 1; day <= daysInMonth; day++) {
-        const currentDate = new Date(year, month - 1, day);
+        const currentDate = toZonedTime(
+          new Date(year, month - 1, day),
+          "Asia/Kolkata",
+        );
 
         const dayName = currentDate.toLocaleDateString("en-US", {
           weekday: "long",
@@ -661,7 +636,7 @@ exports.getMonthlyAttendance = async (req, res) => {
       // Mark approved leaves
       employeeLeaves.forEach((leave) => {
         if (leave.leaveType === "HalfDay") {
-          const day = new Date(leave.startDate).getDate();
+          const day = toZonedTime(leave.startDate, "Asia/Kolkata").getDate();
 
           attendanceMap[day] = {
             status: "HalfDay",
@@ -680,14 +655,17 @@ exports.getMonthlyAttendance = async (req, res) => {
         );
 
         while (currentDate <= leaveEndDate) {
-          const dayName = currentDate.toLocaleDateString("en-US", {
+          const dayName = toZonedTime(
+            currentDate,
+            "Asia/Kolkata",
+          ).toLocaleDateString("en-US", {
             weekday: "long",
           });
 
           const isWeeklyOff = employee.weeklyOffs?.includes(dayName);
 
           if (!isWeeklyOff) {
-            const day = currentDate.getDate();
+            const day = toZonedTime(currentDate, "Asia/Kolkata").getDate();
 
             if (leave.leaveType === "HalfDay") {
               attendanceMap[day] = {
@@ -710,7 +688,7 @@ exports.getMonthlyAttendance = async (req, res) => {
 
       // Override leave with actual attendance if exists
       employeeRecords.forEach((record) => {
-        const day = new Date(record.date).getDate();
+        const day = toZonedTime(record.date, "Asia/Kolkata").getDate();
 
         attendanceMap[day] = {
           attendanceId: record._id,
@@ -723,7 +701,10 @@ exports.getMonthlyAttendance = async (req, res) => {
       });
 
       const presentCount = employeeRecords.filter((record) => {
-        const dayName = new Date(record.date).toLocaleDateString("en-US", {
+        const dayName = toZonedTime(
+          record.date,
+          "Asia/Kolkata",
+        ).toLocaleDateString("en-US", {
           weekday: "long",
         });
 
@@ -733,7 +714,10 @@ exports.getMonthlyAttendance = async (req, res) => {
       }).length;
 
       const absentCount = employeeRecords.filter((record) => {
-        const dayName = new Date(record.date).toLocaleDateString("en-US", {
+        const dayName = toZonedTime(
+          record.date,
+          "Asia/Kolkata",
+        ).toLocaleDateString("en-US", {
           weekday: "long",
         });
 
