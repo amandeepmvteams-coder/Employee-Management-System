@@ -7,7 +7,7 @@ import axios from "axios";
 import { toast } from "sonner";
 import { ModalContext } from "../context/modalContext";
 const Home = () => {
-  const [users, setUsers] = useState([]);
+  const [totalEmployees, setTotalEmployees] = useState(0);
   const [newUsers, setNewUsers] = useState(0);
   const [totalEmployees, setTotalEmployees] = useState(null);
   const [recentUsers, setRecentUsers] = useState([]);
@@ -16,23 +16,18 @@ const Home = () => {
   const [presentToday, setPresentToday] = useState(0);
   const token = localStorage.getItem("token");
   const { dark, loggedInUser } = useContext(ModalContext);
-  const fetchUsers = async () => {
+  const fetchEmployeeCount = async () => {
     try {
-      if (loggedInUser.role === "admin") {
-        const response = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/api/v1/employee`,
-          {
-            headers: {
-              authorization: `Bearer ${token}`,
-            },
+      const response = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/api/v1/employee/employee-count`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
           },
-        );
-
-        setUsers(response.data.employees);
-      }
-      return;
+        },
+      );
+      setTotalEmployees(response.data?.totalEmployees);
     } catch (error) {
-      console.log(error.message);
       toast.error(error?.response?.data?.message);
     }
   };
@@ -76,7 +71,7 @@ const Home = () => {
     }
   };
   useEffect(() => {
-    fetchUsers();
+    fetchEmployeeCount();
     fetchRecentTasks();
     fetchRecentUsers();
   }, []);
@@ -115,7 +110,9 @@ const Home = () => {
               <MdSupervisorAccount />
             </div>
 
-            <h2 className="text-3xl font-bold text-gray-900">{users.length}</h2>
+            <h2 className="text-3xl font-bold text-gray-900">
+              {totalEmployees}
+            </h2>
 
             <p className="text-gray-700 font-semibold mt-2">Total Employees</p>
 
