@@ -224,7 +224,7 @@ exports.recentEmployee = async (req, res) => {
       .sort({
         createdAt: -1,
       })
-      .limit(5);
+      .limit(5).lean()
     const oneMonthAgo = new Date();
     oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
 
