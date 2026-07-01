@@ -186,7 +186,7 @@ const AddEmployee = () => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm overflow-y-auto p-3 sm:p-6 z-50">
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm overflow-y-auto px-5 py-10 sm:p-6 z-50">
       <div
         ref={formRef}
         className="relative max-w-137.5 mx-auto h-auto bg-white rounded-2xl shadow-2xl p-6 md:p-8"
@@ -195,17 +195,17 @@ const AddEmployee = () => {
           onClick={handleCancel}
           className="absolute top-5 right-5 text-black cursor-pointer font-bold"
         />
-        <h2 className="text-2xl md:text-3xl font-bold text-slate-800  mb-6">
+        <h2 className="text-2xl md:text-3xl font-bold text-slate-800  mb-4 md:mb-6">
           {editingEmployee ? "Edit Employee" : "Add Employee"}
         </h2>
 
         <form
           onSubmit={handleSubmit}
-          className="grid grid-cols-1 md:grid-cols-2 text-gray-400 gap-3"
+          className="grid grid-cols-1 md:grid-cols-2 text-gray-400 gap-2 md:gap-3"
         >
           {/* Name */}
           <div className="md:col-span-2">
-            <label className="block  font-medium text-gray-500">
+            <label className="block  font-medium text-sm md:text-base text-gray-500">
               Full Name
             </label>
             <input
@@ -221,7 +221,9 @@ const AddEmployee = () => {
 
           {/* Email */}
           <div>
-            <label className="block  font-medium text-gray-500">Email</label>
+            <label className="block  font-medium text-sm md:text-base text-gray-500">
+              Email
+            </label>
             <input
               type="email"
               name="email"
@@ -235,7 +237,9 @@ const AddEmployee = () => {
 
           {/* Password */}
           <div>
-            <label className="block  font-medium text-gray-500">Password</label>
+            <label className="block  font-medium text-sm md:text-base text-gray-500">
+              Password
+            </label>
             <input
               type="password"
               name="password"
@@ -249,7 +253,9 @@ const AddEmployee = () => {
 
           {/* Phone */}
           <div>
-            <label className="block  font-medium text-gray-500">Phone</label>
+            <label className="block  font-medium text-sm md:text-base text-gray-500">
+              Phone
+            </label>
             <input
               type="text"
               name="phone"
@@ -263,7 +269,7 @@ const AddEmployee = () => {
 
           {/* Department */}
           <div>
-            <label className="block  font-medium text-gray-500">
+            <label className="block  font-medium text-sm md:text-base text-gray-500">
               Department
             </label>
             <select
@@ -285,7 +291,7 @@ const AddEmployee = () => {
 
           {/* Designation */}
           <div>
-            <label className="block  font-medium text-gray-500">
+            <label className="block  font-medium text-sm md:text-base text-gray-500">
               Designation
             </label>
             <input
@@ -301,7 +307,9 @@ const AddEmployee = () => {
 
           {/* Status */}
           <div>
-            <label className="block  font-medium text-gray-500">Status</label>
+            <label className="block  font-medium text-sm md:text-base text-gray-500">
+              Status
+            </label>
             <select
               name="status"
               value={formData.status}
@@ -316,7 +324,7 @@ const AddEmployee = () => {
 
           {/* DOB */}
           <div>
-            <label className="block  font-medium text-gray-500">
+            <label className="block  font-medium text-sm md:text-base text-gray-500">
               Date of Birth
             </label>
             <input
@@ -330,7 +338,9 @@ const AddEmployee = () => {
 
           {/* Gender */}
           <div>
-            <label className="block  font-medium text-gray-500">Gender</label>
+            <label className="block  font-medium text-sm md:text-base text-gray-500">
+              Gender
+            </label>
             <select
               name="gender"
               value={formData.gender}
@@ -345,7 +355,7 @@ const AddEmployee = () => {
           </div>
           {/* WeeklyOffs  */}
           <div className="md:col-span-2">
-            <label className="block font-medium text-gray-500 mb-2">
+            <label className="block font-medium text-sm md:text-base text-gray-500 mb-2">
               Weekly Offs
             </label>
 
@@ -387,7 +397,9 @@ const AddEmployee = () => {
           </div>
           {/* Address */}
           <div className="md:col-span-2">
-            <label className="block  font-medium text-gray-500">Address</label>
+            <label className="block  font-medium text-sm md:text-base text-gray-500">
+              Address
+            </label>
             <textarea
               rows="4"
               name="address"
@@ -399,7 +411,7 @@ const AddEmployee = () => {
           </div>
           {/* Profile Photo */}
           <div className="md:col-span-2">
-            <label className="block  font-medium text-gray-500">
+            <label className="block  font-medium text-sm md:text-base text-gray-500">
               Profile Photo
             </label>
 
@@ -409,7 +421,7 @@ const AddEmployee = () => {
               accept="image/*"
               onChange={handleImageUpload}
               className="w-full border rounded-lg px-2 py-1 text-gray-500 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0
-            file:bg-blue-50 file:text-blue-600 file:font-medium hover:file:bg-blue-100 cursor-pointer"
+            file:bg-blue-50 file:text-blue-600 file:font-medium  hover:file:bg-blue-100 cursor-pointer"
             />
           </div>
           {/* Submit */}

@@ -62,7 +62,6 @@ const UserLayout = () => {
           </div>
         </div>
       )}
-
     </div>
   );
 };

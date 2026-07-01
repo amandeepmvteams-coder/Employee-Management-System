@@ -166,7 +166,9 @@ const AddTask = () => {
       <form onSubmit={handleSubmit} className="space-y-2 ">
         {/* Title */}
         <div>
-          <label className="block mb-1  text-sm font-medium">Task Title</label>
+          <label className="block mb-1  text-xs md:text-sm font-medium">
+            Task Title
+          </label>
           <input
             type="text"
             name="title"
@@ -180,7 +182,9 @@ const AddTask = () => {
 
         {/* Description */}
         <div>
-          <label className="block mb-1 text-sm font-medium">Description</label>
+          <label className="block mb-1 text-xs md:text-sm font-medium">
+            Description
+          </label>
           <textarea
             name="description"
             value={formData.description}
@@ -194,9 +198,11 @@ const AddTask = () => {
 
         {/* Assign Users */}
         <div>
-          <label className="block mb-3 text-sm font-medium">Assign Users</label>
+          <label className="block mb-3 text-xs md:text-sm font-medium">
+            Assign Users
+          </label>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-1 border rounded-lg p-4 max-h-60 overflow-y-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-1 border rounded-lg md:p-4 max-h-36 md:max-h-60 overflow-y-auto">
             {employees?.map((employee) => (
               <label
                 key={employee._id}
@@ -212,25 +218,31 @@ const AddTask = () => {
                 <img
                   src={employee.profilePhoto}
                   alt={employee.name}
-                  className="w-10 h-10 rounded-full object-cover"
+                  className="md:w-10 md:h-10 w-8 h-8 rounded-full object-cover"
                 />
 
                 <div>
-                  <p className="font-medium">{employee.name}</p>
-                  <p className="text-sm text-gray-500">{employee.email}</p>
+                  <p className="text-sm md:text-base font-medium ">
+                    {employee.name}
+                  </p>
+                  <p className="text-xs md:text-sm text-gray-500">
+                    {employee.email}
+                  </p>
                 </div>
               </label>
             ))}
           </div>
 
-          <p className="mt-2 text-sm text-gray-500">
+          <p className="mt-2 text-xs md:text-sm text-gray-500">
             Selected Users: {formData.assignTo.length}
           </p>
         </div>
         {/* Dates */}
-        <div className="grid md:grid-cols-2 gap-4">
+        <div className="grid md:grid-cols-2 gap-2 md:gap-4">
           <div>
-            <label className="block mb-1 text-sm font-medium">Start Date</label>
+            <label className="block mb-1 text-xs md:text-sm font-medium">
+              Start Date
+            </label>
             <input
               type="date"
               name="startDate"
@@ -242,7 +254,9 @@ const AddTask = () => {
           </div>
 
           <div>
-            <label className="block mb-1 text-sm font-medium">End Date</label>
+            <label className="block mb-1 text-xs md:text-sm font-medium">
+              End Date
+            </label>
             <input
               type="date"
               name="dueDate"
@@ -253,10 +267,12 @@ const AddTask = () => {
             />
           </div>
         </div>
-        <div className="w-full flex justify-between gap-5 items-center mt-2">
+        <div className="w-full flex justify-between gap-3 md:gap-5 items-center mt-2">
           {/* Status */}
           <div className="w-full">
-            <label className="block mb-1 text-sm font-medium">Status</label>
+            <label className="block mb-1 text-xs md:text-sm font-medium">
+              Status
+            </label>
 
             <select
               name="status"
@@ -273,7 +289,9 @@ const AddTask = () => {
           {/* Priority */}
 
           <div className="w-full">
-            <label className="block mb-1 text-sm font-medium">Priority</label>
+            <label className="block mb-1 text-xs md:text-sm font-medium">
+              Priority
+            </label>
 
             <select
               name="priority"
