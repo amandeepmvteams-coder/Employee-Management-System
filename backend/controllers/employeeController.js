@@ -53,7 +53,7 @@ exports.addEmployee = async (req, res) => {
       });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 12);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const employee = await User.create({
       name,
@@ -133,7 +133,7 @@ exports.updateEmployee = async (req, res) => {
     employee.weeklyOffs = weeklyOffs || employee.weeklyOffs;
 
     if (password) {
-      employee.password = await bcrypt.hash(password, 12);
+      employee.password = await bcrypt.hash(password, 10);
     }
 
     await employee.save();

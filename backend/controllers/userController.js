@@ -89,7 +89,7 @@ exports.login = async (req, res) => {
       : process.env.JWT_EXPIRES_IN_NOT_REMEMBER;
 
     const token = signToken(user._id, expiry);
-    
+
     user.password = undefined;
 
     res.status(200).json({
