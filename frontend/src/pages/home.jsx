@@ -9,49 +9,18 @@ import { ModalContext } from "../context/modalContext";
 const Home = () => {
   const [totalEmployees, setTotalEmployees] = useState(0);
   const [newUsers, setNewUsers] = useState(0);
-  // const [totalEmployees, setTotalEmployees] = useState(null);
   const [recentUsers, setRecentUsers] = useState([]);
   const [recentTasks, setRecentTasks] = useState([]);
   const [onLeaveToday, setOnLeaveToday] = useState(0);
   const [presentToday, setPresentToday] = useState(0);
   const token = localStorage.getItem("token");
   const { dark, loggedInUser } = useContext(ModalContext);
-  const fetchEmployeeCount = async () => {
-    try {
-      const response = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/api/v1/employee/employee-count`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-      setTotalEmployees(response.data?.totalEmployees);
-    } catch (error) {
-      toast.error(error?.response?.data?.message);
-    }
-  };
 
-  const fetchRecentTasks = async () => {
-    try {
-      const response = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/api/v1/tasks/recent-tasks`,
-        {
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-        },
-      );
-      setRecentTasks(response.data);
-    } catch (error) {
-      toast.error(error?.response?.data?.message);
-    }
-  };
-  const fetchRecentUsers = async () => {
+  const fetchDashboard = async () => {
     try {
       if (loggedInUser.role === "admin") {
         const response = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/api/v1/employee/recent-employee`,
+          `${import.meta.env.VITE_BACKEND_URL}/api/v1/employee/dashboard`,
           {
             headers: {
               authorization: `Bearer ${token}`,
@@ -59,10 +28,12 @@ const Home = () => {
           },
         );
 
-        setRecentUsers(response.data.recentEmployees);
-        setNewUsers(response.data.CountNewEmployees);
-        setOnLeaveToday(response.data.onLeaveToday);
-        setPresentToday(response.data.todayPresent);
+        setRecentUsers(response?.data?.recentEmployees);
+        setRecentTasks(response?.data?.recentTasks);
+        setTotalEmployees(response?.data?.totalEmployees);
+        setNewUsers(response?.data?.CountNewEmployees);
+        setOnLeaveToday(response?.data?.onLeaveToday);
+        setPresentToday(response?.data?.todayPresent);
       }
       return;
     } catch (error) {
@@ -71,9 +42,7 @@ const Home = () => {
     }
   };
   useEffect(() => {
-    fetchEmployeeCount();
-    fetchRecentTasks();
-    fetchRecentUsers();
+    fetchDashboard();
   }, []);
   return (
     <div

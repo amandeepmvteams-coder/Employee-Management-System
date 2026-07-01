@@ -3,6 +3,8 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const Leave = require("../model/leaveModel");
 const Attendance = require("../model/attendanceModel");
+const { getISTDayRange } = require("../utils/date");
+const Tasks = require("../model/taskModel");
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECURE, {
     expiresIn: process.env.JWT_EXPIRES_IN,
@@ -218,62 +220,80 @@ exports.fetchEmployeeOnly = async (req, res) => {
   }
 };
 
-exports.recentEmployee = async (req, res) => {
+exports.fetchDashboard = async (req, res) => {
   try {
     const recentEmployees = await User.find({ role: "employee" })
-      .sort({
-        createdAt: -1,
-      })
-      .limit(5).lean()
-    const oneMonthAgo = new Date();
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .lean();
+
+    const { start, end } = getISTDayRange();
+
+    const oneMonthAgo = new Date(start);
     oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const [
+      todayPresent,
+      onLeaveToday,
+      CountNewEmployees,
+      totalEmployees,
+      recentTasks,
+    ] = await Promise.all([
+      Attendance.countDocuments({
+        status: "Present",
+        date: {
+          $gte: start,
+          $lte: end,
+        },
+      }),
 
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
+      Attendance.countDocuments({
+        status: "Leave",
+        date: {
+          $gte: start,
+          $lte: end,
+        },
+      }),
 
-    const todayPresent = await Attendance.countDocuments({
-      status: "Present",
-      date: {
-        $gte: today,
-        $lt: tomorrow,
-      },
-    });
-    const onLeaveToday = await Attendance.countDocuments({
-      status: "Leave",
-      date: {
-        $gte: today,
-        $lt: tomorrow,
-      },
-    });
+      User.countDocuments({
+        role: "employee",
+        createdAt: {
+          $gte: oneMonthAgo,
+        },
+      }),
+      User.countDocuments({
+        role: "employee",
+        status: { $ne: "Inactive" },
+      }),
+      Tasks.find({})
+        .sort({ createdAt: -1 })
+        .limit(5)
+        .populate(
+          "assignTo createdBy comments.user",
+          "name role email profilePhoto",
+        )
+        .lean(),
+    ]);
 
-    //  const onLeaveToday= (
-    //   await Leave.distinct("employee", {
-    //     status: "Approved",
-    //     startDate: { $gte: today, $lt: tomorrow },
-    //   })
-    // ).length;
-
-    const CountNewEmployees = await User.countDocuments({
-      role: "employee",
-      createdAt: { $gte: oneMonthAgo },
-    });
-
-    if (recentEmployees.length === 0) {
+    if (!recentEmployees.length) {
       return res.status(404).json({
-        error: "No employees found",
+        success: false,
+        message: "No employees found",
       });
     }
+
     res.status(200).json({
+      success: true,
       recentEmployees,
       CountNewEmployees,
       onLeaveToday,
       todayPresent,
+      totalEmployees,
+      recentTasks,
     });
   } catch (error) {
     res.status(500).json({
+      success: false,
       message: error.message,
     });
   }

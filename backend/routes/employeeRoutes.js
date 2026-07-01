@@ -15,10 +15,10 @@ router.get(
   employeeController.EmployeeCount,
 );
 router.get(
-  "/recent-employee",
+  "/dashboard",
   authMiddleware.protect,
   authMiddleware.admin,
-  employeeController.recentEmployee,
+  employeeController.fetchDashboard,
 );
 router.get(
   "/department-stats",
