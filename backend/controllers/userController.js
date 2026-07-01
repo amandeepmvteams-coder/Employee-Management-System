@@ -26,7 +26,7 @@ exports.register = async (req, res) => {
       });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 12);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await User.create({
       name,
@@ -62,8 +62,6 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
   try {
-    console.time("Total Login");
-
     const { email, password, rememberMe } = req.body;
 
     if (!email || !password) {
@@ -71,19 +69,14 @@ exports.login = async (req, res) => {
         message: "All fields are required",
       });
     }
-    console.time("Find User");
     const user = await User.findOne({ email }).select("+password");
-    console.timeEnd("Find User");
     if (!user) {
       return res.status(401).json({
         message: "Invalid email or password",
       });
     }
 
-
-    console.time("Compare Password");
     const isMatch = await bcrypt.compare(password, user.password);
-    console.timeEnd("Compare Password");
 
     if (!isMatch) {
       return res.status(401).json({
@@ -95,11 +88,10 @@ exports.login = async (req, res) => {
       ? process.env.JWT_EXPIRES_IN_REMEMBER
       : process.env.JWT_EXPIRES_IN_NOT_REMEMBER;
 
-    console.time("Sign Token");
     const token = signToken(user._id, expiry);
-    console.timeEnd("Sign Token");
+    
     user.password = undefined;
-    console.timeEnd("Total Login");
+
     res.status(200).json({
       message: "Successfully logged in",
       user: {
