@@ -207,6 +207,7 @@ exports.deleteAttendance = async (req, res) => {
   }
 };
 
+
 exports.getAttendanceStatistics = async (req, res) => {
   try {
     const { employeeId, month, year } = req.query;

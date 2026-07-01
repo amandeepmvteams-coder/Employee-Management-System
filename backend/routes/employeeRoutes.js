@@ -8,12 +8,7 @@ router.post(
   authMiddleware.admin,
   employeeController.addEmployee,
 );
-router.get(
-  "/employee-count",
-  authMiddleware.protect,
-  authMiddleware.admin,
-  employeeController.EmployeeCount,
-);
+
 router.get(
   "/dashboard",
   authMiddleware.protect,
